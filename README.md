@@ -1,6 +1,6 @@
 # 🌏 WorldMM: Dynamic Multimodal Memory Agent for Long Video Reasoning
 
-<a href="https://arxiv.org/abs/xxxx.xxxxx"><img src="https://img.shields.io/badge/arXiv-xxxx.xxxxx-b31b1b.svg" alt="arXiv"></a>
+<a href="https://arxiv.org/abs/2512.02425"><img src="https://img.shields.io/badge/arXiv-2512.02425-b31b1b.svg" alt="arXiv"></a>
 <a href="https://worldmm.github.io"><img src="https://img.shields.io/badge/Project-Page-green.svg" alt="Project Page"></a>
 <a href="https://www.python.org/downloads/release/python-3100/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+"></a>
 
@@ -105,7 +105,7 @@ If you find WorldMM helpful, please consider citing our paper:
 @article{yeo2025worldmm,
   title   = {WorldMM: Dynamic Multimodal Memory Agent for Long Video Reasoning},
   author  = {Yeo, Woongyeong and Kim, Kangsan and Yoon, Jaehong and Hwang, Sung Ju},
-  journal = {arXiv preprint arXiv:xxxx.xxxxx},
+  journal = {arXiv preprint arXiv:2512.02425},
   year    = {2025}
 }
 ```
