@@ -9,7 +9,6 @@ import random
 import numpy as np
 import requests
 from egorag.database.Chroma import Chroma
-from egorag.models import BaseQueryModel
 from egorag.utils.util import *
 from egorag.utils.agent_fun import *
 from egorag.utils.prompts import *
@@ -27,7 +26,7 @@ import requests
 class RagAgent(ABC):
     def __init__(
         self,
-        model: Optional[BaseQueryModel] = None,
+        model = None,
         database_t: Optional[Chroma] = None,
         database_i: Optional[Chroma] = None,
         name: str = "NULL",
