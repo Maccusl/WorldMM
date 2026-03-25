@@ -93,7 +93,7 @@ class SemanticExtraction:
 
         combined_results = {
             "semantic_triples": ordered_semantic_triples,
-            "episodic_evidence": ordered_episodic_evidence
+            # "episodic_evidence": ordered_episodic_evidence,
         }
         self.save_results(combined_results, output_dir)
 

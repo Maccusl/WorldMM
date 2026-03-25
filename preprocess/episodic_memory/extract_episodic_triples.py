@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Script to process EgoLifeCap captions using OpenIE functionality.
-Extracts Named Entities and Triples from the caption text, then reformats the results to timestamp-based structure.
+Extract Named Entities and Triples from caption text using OpenIE,
+then reformat the results into a timestamp-based structure.
 """
 
+import argparse
 import json
 import os
 from typing import List, Dict, Any
@@ -78,78 +79,63 @@ def create_episodic_triples_results(caption_data: List[Dict],
     }
 
 
-def main():
-    """Main processing function."""
-    # Configuration
-
-    NUM_TO_NAME = {
-        1: "A1_JAKE",
-        2: "A2_ALICE",
-        3: "A3_TASHA",
-        4: "A4_LUCIA",
-        5: "A5_KATRINA",
-        6: "A6_SHURE"
-    }
-
-    index = 1
-    input_file = f"data/EgoLife/EgoLifeCap/{NUM_TO_NAME[index]}/{NUM_TO_NAME[index]}_30sec.json"
-    output_dir = f"output/metadata/episodic_memory/{NUM_TO_NAME[index]}"
-    
-    # Ensure output directory exists
+def run_episodic_triples(input_file: str, output_dir: str, model_name: str = "gpt-5-mini",
+                         llm_model: LLMModel = None):
+    """Core logic for episodic triple extraction, usable from CLI or as a library call."""
     os.makedirs(output_dir, exist_ok=True)
-    
+
     caption_data = load_caption_data(input_file)
-    logger.info(f"Loaded {len(caption_data)} caption entries")
-    
-    # Extract text passages
+    logger.info(f"Loaded {len(caption_data)} caption entries from {input_file}")
+
     text_passages = extract_text_passages(caption_data)
     logger.info(f"Extracted {len(text_passages)} text passages")
-    
-    llm_model = LLMModel(model_name="gpt-5-mini")
-    
-    # Initialize OpenIE
-    openie_processor = OpenIE(llm_model)
-    
-    # Process with batch OpenIE
-    logger.info("Processing with OpenIE...")
 
+    if llm_model is None:
+        llm_model = LLMModel(model_name=model_name)
+
+    openie_processor = OpenIE(llm_model)
+
+    logger.info("Processing with OpenIE...")
     ner_results, triple_results = openie_processor.batch_openie(text_passages, output_dir=output_dir)
-    
+
     total_entities = sum(len(result) for result in ner_results.values())
     total_triples = sum(len(result) for result in triple_results.values())
     logger.info(f"Total unique entities extracted: {total_entities}")
     logger.info(f"Total triples extracted: {total_triples}")
 
-    logger.info(f"Successfully saved OpenIE results to: {output_dir}/openie_results_gpt-5-mini.json")
-    
-    # Load the OpenIE results that were just saved
-    openie_results_file = os.path.join(output_dir, "openie_results_gpt-5-mini.json")
-    
+    openie_results_file = os.path.join(output_dir, f"openie_results_{model_name}.json")
+
     if not os.path.exists(openie_results_file):
         logger.error(f"OpenIE results file not found: {openie_results_file}")
         return
-    
+
     with open(openie_results_file, 'r', encoding='utf-8') as f:
         openie_data = json.load(f)
-    
+
     logger.info(f"Loaded OpenIE results with {len(openie_data.get('triple_results', {}))} text chunks")
-    
-    # Create episodic triples results
+
     results = create_episodic_triples_results(caption_data, openie_data)
-    
-    # Print statistics
+
     total_triples_reformat = sum(len(triples) for triples in results['episodic_triples'].values())
     avg_triples = total_triples_reformat / len(results['episodic_triples']) if results['episodic_triples'] else 0
-    
     logger.info(f"Total episodic triples: {total_triples_reformat}")
     logger.info(f"Average triples per timestamp: {avg_triples:.2f}")
-    
-    # Save results
-    output_file = os.path.join(output_dir, "episodic_triple_results_gpt-5-mini.json")
+
+    output_file = os.path.join(output_dir, f"episodic_triple_results_{model_name}.json")
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
-    
+
     logger.info(f"Successfully saved episodic triples results to: {output_file}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Extract episodic triples from captions using OpenIE.")
+    parser.add_argument("--caption-file", type=str, default="data/EgoLife/EgoLifeCap/A1_JAKE/A1_JAKE_30sec.json", help="Path to caption JSON file.")
+    parser.add_argument("--output-dir", type=str, default="output/metadata/episodic_memory/A1_JAKE", help="Output directory for results.")
+    parser.add_argument("--model", type=str, default="gpt-5-mini", help="LLM model name.")
+    args = parser.parse_args()
+
+    run_episodic_triples(args.caption_file, args.output_dir, args.model)
 
 
 if __name__ == "__main__":

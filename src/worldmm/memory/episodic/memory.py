@@ -78,7 +78,7 @@ class EpisodicMemory:
         prompt_template_manager: Manager for prompt templates
     """
     
-    GRANULARITY_ORDER = ["30sec", "3min", "10min", "1h"]
+    GRANULARITY_ORDER = ["10sec", "30sec", "3min", "10min", "1h"]
     
     def __init__(
         self,
@@ -86,6 +86,7 @@ class EpisodicMemory:
         llm_model: LLMModel,
         prompt_template_manager: PromptTemplateManager,
         granularities: Optional[List[str]] = None,
+        save_dir_root: str = ".cache/episodic_memory",
     ):
         """
         Initialize EpisodicMemory.
@@ -100,6 +101,7 @@ class EpisodicMemory:
         self.llm_model = llm_model
         self.prompt_template_manager = prompt_template_manager
         self.granularities = granularities or self.GRANULARITY_ORDER
+        self.save_dir_root = save_dir_root
         
         # Storage for captions
         self.captions: Dict[str, List[CaptionEntry]] = {g: [] for g in self.granularities}
@@ -119,7 +121,7 @@ class EpisodicMemory:
         """Get or create HippoRAG instance for a granularity level."""
         if granularity not in self.hipporag:
             self.hipporag[granularity] = HippoRAG(
-                save_dir=f".cache/episodic_memory/{granularity}",
+                save_dir=f"{self.save_dir_root}/{granularity}",
                 llm_model=self.llm_model,
                 embedding_model=self.embedding_model)
         return self.hipporag[granularity]

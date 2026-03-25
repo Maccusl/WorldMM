@@ -55,6 +55,8 @@ class WorldMemory:
         respond_llm_model: Optional[LLMModel] = None,
         prompt_template_manager: Optional[PromptTemplateManager] = None,
         episodic_granularities: Optional[List[str]] = None,
+        episodic_cache_root: str = ".cache/episodic_memory",
+        qa_template_name: str = "qa_egolife",
         max_rounds: int = 5,
         max_errors: int = 5,
     ):
@@ -76,6 +78,7 @@ class WorldMemory:
         self.prompt_template_manager = prompt_template_manager or PromptTemplateManager()
         self.max_rounds = max_rounds
         self.max_errors = max_errors
+        self.qa_template_name = qa_template_name
         
         # Initialize memory subsystems
         self.episodic_memory = EpisodicMemory(
@@ -83,6 +86,7 @@ class WorldMemory:
             llm_model=retriever_llm_model,
             prompt_template_manager=self.prompt_template_manager,
             granularities=episodic_granularities,
+            save_dir_root=episodic_cache_root,
         )
         
         self.semantic_memory = SemanticMemory(embedding_model=embedding_model)
@@ -553,9 +557,9 @@ Step 2 (only if search): Pick one memory type (episodic/semantic/visual) and for
         logger.info("Generating answer from accumulated context")
         
         try:
-            qa_prompt = self.prompt_template_manager.render("qa_egolife")
+            qa_prompt = self.prompt_template_manager.render(self.qa_template_name)
         except Exception as e:
-            logger.error(f"Failed to load qa_egolife template: {e}")
+            logger.error(f"Failed to load {self.qa_template_name} template: {e}")
             raise
         
         # Build QA message with all retrieved context
@@ -595,6 +599,20 @@ Step 2 (only if search): Pick one memory type (episodic/semantic/visual) and for
         self.visual_memory.reset_index()
         self.indexed_time = 0
         logger.info("All memory indices reset")
+    
+    def reset(self) -> None:
+        """Reset all state including loaded data for per-video processing."""
+        self.reset_index()
+        self.episodic_memory.captions = {g: [] for g in self.episodic_memory.granularities}
+        self.episodic_memory.caption_id_to_entry.clear()
+        self.episodic_memory.text_to_entry.clear()
+        self.semantic_memory.triple_id_to_entry.clear()
+        self.semantic_memory.timestamp_to_triples.clear()
+        self.semantic_memory.available_timestamps.clear()
+        self.visual_memory.clips.clear()
+        self.visual_memory.clip_id_to_entry.clear()
+        self.visual_memory.embedding_lookup.clear()
+        logger.info("All memory data and indices reset")
     
     def cleanup(self) -> None:
         """Release GPU memory and other resources."""

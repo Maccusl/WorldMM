@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Union, List, Optional
+from typing import Union, List, Dict, Any, Optional
 from PIL import Image
 
 
@@ -76,7 +76,7 @@ class EmbeddingModel:
         """Encode images using VLM2VecV2 model"""
         return self.vis_model.encode_image(images, **kwargs)
     
-    def encode_video(self, video_paths: Union[str, List[str]], **kwargs) -> np.ndarray:
+    def encode_video(self, video_paths: Union[str, Dict[str, Any], List[str], List[Dict[str, Any]]], **kwargs) -> np.ndarray:
         """Encode videos using VLM2VecV2 model"""
         return self.vis_model.encode_video(video_paths, **kwargs)
     

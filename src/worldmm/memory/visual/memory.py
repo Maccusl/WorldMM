@@ -25,6 +25,8 @@ class VideoClipEntry:
     start_time: str
     end_time: str
     date: str
+    clip_start_sec: Optional[float] = None
+    clip_end_sec: Optional[float] = None
     embedding: Optional[np.ndarray] = None  # Precomputed embedding
     
     @property
@@ -67,6 +69,15 @@ def _load_json(file_path: str) -> Any:
     import json
     with open(file_path, 'r') as f:
         return json.load(f)
+
+
+def _time_str_to_seconds(time_str: str) -> float:
+    """Convert HHMMSSFF time string to seconds."""
+    time_str = str(time_str).zfill(8)
+    hours = int(time_str[0:2])
+    minutes = int(time_str[2:4])
+    seconds = int(time_str[4:6])
+    return float(hours * 3600 + minutes * 60 + seconds)
 
 
 def _parse_time_range(time_range: str) -> Tuple[int, int]:
@@ -156,7 +167,7 @@ class VisualMemory:
         self.clip_id_to_entry: Dict[str, VideoClipEntry] = {}
         
         # Precomputed embeddings from pickle file
-        self.video_path_to_embedding: Dict[str, np.ndarray] = {}
+        self.embedding_lookup: Dict[str, np.ndarray] = {}
         
         # Indexed state
         self.indexed_entries: List[VideoClipEntry] = []
@@ -177,9 +188,9 @@ class VisualMemory:
             raise FileNotFoundError(f"Embeddings file not found: {embeddings_path}")
         
         with open(embeddings_path, 'rb') as f:
-            self.video_path_to_embedding = pickle.load(f)
+            self.embedding_lookup = pickle.load(f)
         
-        logger.info(f"Loaded {len(self.video_path_to_embedding)} video embeddings from {embeddings_path}")
+        logger.info(f"Loaded {len(self.embedding_lookup)} video embeddings from {embeddings_path}")
     
     def load_clips_from_file(self, clips_path: str) -> None:
         """
@@ -201,18 +212,32 @@ class VisualMemory:
             data: List of dicts with keys: start_time, end_time, date, video_path, text (optional)
         """
         for idx, entry in enumerate(data):
-            clip_id = f"visual_{idx}"
-            video_path = entry.get("video_path", "")
+            clip_id = entry.get("clip_id") or entry.get("id") or f"visual_{idx}"
+            video_path = entry.get("source_video_path") or entry.get("video_path", "")
             
-            # Get precomputed embedding if available
-            embedding = self.video_path_to_embedding.get(video_path)
+            # Get precomputed embedding if available (try clip_id, video_path, start_time)
+            embedding = self.embedding_lookup.get(clip_id)
+            if embedding is None:
+                embedding = self.embedding_lookup.get(video_path)
+            if embedding is None:
+                start_time_key = str(entry.get("start_time", ""))
+                embedding = self.embedding_lookup.get(start_time_key)
             
+            clip_start_sec = entry.get("start_sec")
+            clip_end_sec = entry.get("end_sec")
+            if clip_start_sec is None and entry.get("start_time"):
+                clip_start_sec = _time_str_to_seconds(str(entry["start_time"]))
+            if clip_end_sec is None and entry.get("end_time"):
+                clip_end_sec = _time_str_to_seconds(str(entry["end_time"]))
+
             clip_entry = VideoClipEntry(
                 id=clip_id,
                 video_path=video_path,
                 start_time=str(entry.get("start_time", "")),
                 end_time=str(entry.get("end_time", "")),
                 date=entry.get("date", ""),
+                clip_start_sec=clip_start_sec,
+                clip_end_sec=clip_end_sec,
                 embedding=embedding,
             )
             self.clips.append(clip_entry)
@@ -369,7 +394,13 @@ class VisualMemory:
             # Extract frames from all retrieved clips, organized by clip
             frames_by_clip: Dict[str, List[FrameEntry]] = {}
             for clip in results:
-                frames = self._extract_frames(clip.video_path, fps=fps, max_frames=None)
+                frames = self._extract_frames(
+                    clip.video_path,
+                    fps=fps,
+                    max_frames=None,
+                    start_sec=clip.clip_start_sec,
+                    end_sec=clip.clip_end_sec,
+                )
                 display_key = clip.to_display_str()
                 frames_by_clip[display_key] = frames
             

@@ -28,11 +28,6 @@ The setup script will:
 ```sh
 bash script/1_setup.sh
 ```
-If you prefer to run the steps manually:
-```sh
-uv sync
-hf download lmms-lab/EgoLife --repo-type=dataset --local-dir data/EgoLife
-```
 
 ### 3. Set Environment Variables (Optional)
 To use GPT-family models for preprocessing or evaluation, set your OpenAI API key:
@@ -94,9 +89,16 @@ bash script/4_eval.sh --retriever-model gpt-5-mini --respond-model gpt-5
 ```
 WorldMM supports a variety of backbone models for retrieval and reasoning, including `gpt-5` and `qwen3vl-8b`.
 
-## Acknowledgments
+## Using WorldMM on Other Video Benchmarks
 
-Our implementation is built upon [EgoLife](https://github.com/EvolvingLMMs-Lab/EgoLife), [HippoRAG](https://github.com/OSU-NLP-Group/HippoRAG), and [VLM2Vec](https://github.com/TIGER-AI-Lab/VLM2Vec). We thank the authors for open-sourcing their code and dataset.
+Beyond evaluation on week-long videos, WorldMM also supports evaluation on general video benchmarks. We provide an example pipeline for [Video-MME](https://github.com/MME-Benchmarks/Video-MME):
+```sh
+bash script/videomme/1_setup.sh
+bash script/videomme/2_preprocess.sh
+bash script/videomme/3_build_memory.sh --model gpt-5-mini
+bash script/videomme/4_eval.sh --retriever-model gpt-5-mini --respond-model gpt-5
+```
+For detailed information about each step, please refer to the scripts located in `script/videomme`.
 
 ## Citation
 
@@ -109,3 +111,7 @@ If you find WorldMM helpful, please consider citing our paper:
   year    = {2025}
 }
 ```
+
+## Acknowledgments
+
+Our implementation is built upon [EgoLife](https://github.com/EvolvingLMMs-Lab/EgoLife), [HippoRAG](https://github.com/OSU-NLP-Group/HippoRAG), and [VLM2Vec](https://github.com/TIGER-AI-Lab/VLM2Vec). We thank the authors for open-sourcing their code and dataset.

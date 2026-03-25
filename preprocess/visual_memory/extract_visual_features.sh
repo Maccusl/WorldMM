@@ -131,7 +131,7 @@ else
     done
     
     echo ""
-    echo "All $NUM_GPUS processes launched. Waiting for completion..."
+    echo "All $NUM_SPLITS processes launched. Waiting for completion..."
     echo ""
     
     # Wait for all background processes and check their exit status

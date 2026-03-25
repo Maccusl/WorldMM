@@ -1,4 +1,4 @@
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict, Any
 from PIL import Image
 import logging
 import numpy as np
@@ -154,7 +154,7 @@ class VLM2VecV2EmbeddingModel:
         
         return output.float().cpu().numpy()
     
-    def encode_video(self, video_paths: Union[str, List[str]], 
+    def encode_video(self, video_paths: Union[str, Dict[str, Any], List[str], List[Dict[str, Any]]], 
                      query_text: Optional[str] = None, **kwargs) -> np.ndarray:
         """
         Encode videos into embeddings
@@ -167,7 +167,7 @@ class VLM2VecV2EmbeddingModel:
         Returns:
             numpy array of embeddings with shape (num_videos, embedding_dim)
         """
-        if isinstance(video_paths, str):
+        if isinstance(video_paths, (str, dict)):
             video_paths = [video_paths]
         
         embeddings = []
@@ -180,6 +180,13 @@ class VLM2VecV2EmbeddingModel:
         
         with torch.no_grad():
             for video_path in video_paths:
+                if isinstance(video_path, dict):
+                    video_spec = dict(video_path)
+                    if "video" not in video_spec:
+                        raise ValueError("Video spec dictionaries must contain a 'video' key.")
+                else:
+                    video_spec = {"video": video_path}
+
                 # Prepare video message format (following the demo)
                 messages = [
                     {
@@ -187,9 +194,9 @@ class VLM2VecV2EmbeddingModel:
                         "content": [
                             {
                                 "type": "video",
-                                "video": video_path,
                                 "max_pixels": max_pixels,
                                 "nframes": nframes,
+                                **video_spec,
                             },
                             {"type": "text", "text": "Describe this video."},
                         ],

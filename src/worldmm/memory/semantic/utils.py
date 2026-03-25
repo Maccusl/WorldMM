@@ -12,12 +12,12 @@ class SemanticRawOutput(BaseModel):
             raise ValueError("Each semantic triple must contain exactly 3 elements.", v)
         return v
     
-    @field_validator("episodic_evidence")
-    def validate_evidence_length(cls, v, info):
-        semantic_triples = info.data.get("semantic_triples", [])
-        if len(v) != len(semantic_triples):
-            raise ValueError("Length of semantic_triples and episodic_evidence must be the same.", v)
-        return v
+    # @field_validator("episodic_evidence")
+    # def validate_evidence_length(cls, v, info):
+    #     semantic_triples = info.data.get("semantic_triples", [])
+    #     if len(v) != len(semantic_triples):
+    #         raise ValueError("Length of semantic_triples and episodic_evidence must be the same.", v)
+    #     return v
 
 
 class ConsolidationRawOutput(BaseModel):

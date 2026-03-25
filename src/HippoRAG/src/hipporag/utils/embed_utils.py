@@ -1,60 +1,94 @@
 from typing import List
-import numpy as np
-import faiss
+import torch
+from tqdm import tqdm
 
 
-# Modified from original HippoRAG repo to use FAISS for KNN retrieval
-
-def retrieve_knn(query_ids: List[str], key_ids: List[str], query_vecs, key_vecs, k=2047,
-                 query_batch_size=1000, key_batch_size=10000):
+def retrieve_knn(query_ids: List[str], key_ids: List[str], query_vecs, key_vecs, k=2047, query_batch_size=1000,
+                 key_batch_size=10000):
     """
-    Retrieve the top-k nearest neighbors for each query id from the key ids using FAISS.
+    Retrieve the top-k nearest neighbors for each query id from the key ids.
     Args:
-        query_ids: List of query identifiers
-        key_ids: List of key identifiers
-        query_vecs: Query vectors (numpy array or list)
-        key_vecs: Key vectors (numpy array or list)
-        k: top-k neighbors to retrieve
-        query_batch_size: (unused, kept for API compatibility)
-        key_batch_size: (unused, kept for API compatibility)
+        query_ids:
+        key_ids:
+        k: top-k
+        query_batch_size:
+        key_batch_size:
 
     Returns:
-        Dictionary mapping query_id -> (list of top-k key_ids, list of similarity scores)
+
     """
-    if len(key_vecs) == 0:
-        return {}
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # Convert to numpy arrays and normalize for cosine similarity
-    query_vecs = np.array(query_vecs, dtype=np.float32)
-    key_vecs = np.array(key_vecs, dtype=np.float32)
-    
-    # Normalize vectors for cosine similarity (FAISS IndexFlatIP computes inner product)
-    faiss.normalize_L2(query_vecs)
-    faiss.normalize_L2(key_vecs)
+    if len(key_vecs) == 0: return {}
 
-    d = key_vecs.shape[1]  # dimension
-    k = min(k, len(key_vecs))  # can't retrieve more than we have
+    query_vecs = torch.tensor(query_vecs, dtype=torch.float32)
+    query_vecs = torch.nn.functional.normalize(query_vecs, dim=1)
 
-    # Use GPU if available, otherwise CPU
-    if faiss.get_num_gpus() > 0:
-        # GPU index for faster search
-        res = faiss.StandardGpuResources()
-        index = faiss.GpuIndexFlatIP(res, d)
-    else:
-        # CPU index
-        index = faiss.IndexFlatIP(d)
+    key_vecs = torch.tensor(key_vecs, dtype=torch.float32)
+    key_vecs = torch.nn.functional.normalize(key_vecs, dim=1)
 
-    # Add key vectors to the index
-    index.add(key_vecs)
-
-    # Search for k nearest neighbors
-    sim_scores, indices = index.search(query_vecs, k)
-
-    # Build results dictionary
     results = {}
-    for i, query_id in enumerate(query_ids):
-        topk_key_ids = [key_ids[idx] for idx in indices[i] if idx >= 0]
-        topk_scores = sim_scores[i][:len(topk_key_ids)].tolist()
-        results[query_id] = (topk_key_ids, topk_scores)
+
+    def get_batches(vecs, batch_size):
+        for i in range(0, len(vecs), batch_size):
+            yield vecs[i:i + batch_size], i
+
+    for query_batch, query_batch_start_idx in tqdm(
+            get_batches(vecs=query_vecs, batch_size=query_batch_size),
+            total=(len(query_vecs) + query_batch_size - 1) // query_batch_size,  # Calculate total batches
+            desc="KNN for Queries"
+    ):
+        query_batch = query_batch.clone().detach()
+        query_batch = query_batch.to(device)
+
+        batch_topk_sim_scores = []
+        batch_topk_indices = []
+
+        offset_keys = 0
+
+        for key_batch, key_batch_start_idx in get_batches(vecs=key_vecs, batch_size=key_batch_size):
+            key_batch = key_batch.to(device)
+            actual_key_batch_size = key_batch.size(0)
+
+            similarity = torch.mm(query_batch, key_batch.T)
+
+            topk_sim_scores, topk_indices = torch.topk(similarity, min(k, actual_key_batch_size), dim=1, largest=True,
+                                                       sorted=True)
+
+            topk_indices += offset_keys
+
+            batch_topk_sim_scores.append(topk_sim_scores)
+            batch_topk_indices.append(topk_indices)
+
+            del similarity
+            key_batch = key_batch.cpu()
+            torch.cuda.empty_cache()
+
+            offset_keys += actual_key_batch_size
+        # end for each kb batch
+
+        batch_topk_sim_scores = torch.cat(batch_topk_sim_scores, dim=1)
+        batch_topk_indices = torch.cat(batch_topk_indices, dim=1)
+
+        final_topk_sim_scores, final_topk_indices = torch.topk(batch_topk_sim_scores,
+                                                               min(k, batch_topk_sim_scores.size(1)), dim=1,
+                                                               largest=True, sorted=True)
+        final_topk_indices = final_topk_indices.cpu()
+        final_topk_sim_scores = final_topk_sim_scores.cpu()
+
+        for i in range(final_topk_indices.size(0)):
+            query_relative_idx = query_batch_start_idx + i
+            query_idx = query_ids[query_relative_idx]
+
+            final_topk_indices_i = final_topk_indices[i]
+            final_topk_sim_scores_i = final_topk_sim_scores[i]
+
+            query_to_topk_key_relative_ids = batch_topk_indices[i][final_topk_indices_i]
+            query_to_topk_key_ids = [key_ids[idx] for idx in query_to_topk_key_relative_ids.cpu().numpy()]
+            results[query_idx] = (query_to_topk_key_ids, final_topk_sim_scores_i.numpy().tolist())
+
+        query_batch = query_batch.cpu()
+        torch.cuda.empty_cache()
+    # end for each query batch
 
     return results
