@@ -57,6 +57,20 @@ def parse_gpu_list(gpu_arg: str) -> List[str]:
     return gpu_tokens
 
 
+def parse_video_ids(video_id_args: Optional[List[str]]) -> Optional[List[str]]:
+    """Parse optional comma-separated and/or space-separated video IDs."""
+    if not video_id_args:
+        return None
+
+    video_ids: List[str] = []
+    for token in video_id_args:
+        for item in token.split(","):
+            item = item.strip()
+            if item:
+                video_ids.append(item)
+    return video_ids or None
+
+
 def run_episodic(video_ids, caption_dir, output_dir, model_name, llm_model):
     from episodic_memory.extract_episodic_triples import run_episodic_triples
 
@@ -143,7 +157,26 @@ def spawn_visual_workers(video_ids, caption_dir, output_dir, model_name, gpu_tok
         assigned_video_ids = select_video_ids_for_split(video_ids, split_id, num_splits)
         logger.info("Starting visual worker %d/%d on GPU %s for %d videos", split_id + 1, num_splits, gpu_id, len(assigned_video_ids))
 
-        cmd = [sys.executable, script_path, "--caption-dir", caption_dir, "--output-dir", output_dir, "--model", model_name, "--step", "visual", "--num-frames", str(num_frames), "--split-id", str(split_id), "--num-splits", str(num_splits)]
+        cmd = [
+            sys.executable,
+            script_path,
+            "--caption-dir",
+            caption_dir,
+            "--output-dir",
+            output_dir,
+            "--model",
+            model_name,
+            "--step",
+            "visual",
+            "--num-frames",
+            str(num_frames),
+            "--split-id",
+            str(split_id),
+            "--num-splits",
+            str(num_splits),
+            "--video-ids",
+            ",".join(video_ids),
+        ]
         env = os.environ.copy()
         env["CUDA_VISIBLE_DEVICES"] = gpu_id
         processes.append((split_id, gpu_id, subprocess.Popen(cmd, env=env)))
@@ -184,6 +217,7 @@ def main():
     parser.add_argument("--num-frames", "--num_frames", dest="num_frames", type=int, default=16, help="Number of frames to extract from each visual segment.")
     parser.add_argument("--split-id", type=int, default=None, help="Worker split ID for internal visual processing.")
     parser.add_argument("--num-splits", type=int, default=1, help="Total worker count for internal visual processing.")
+    parser.add_argument("--video-ids", nargs="*", default=None, help="Optional video IDs to process. Accepts space-separated or comma-separated IDs.")
     args = parser.parse_args()
 
     if args.num_frames < 1:
@@ -204,6 +238,15 @@ def main():
     if not video_ids:
         logger.error(f"No video subdirectories with 10sec.json found in {args.caption_dir}")
         return
+
+    requested_video_ids = parse_video_ids(args.video_ids)
+    if requested_video_ids:
+        available = set(video_ids)
+        missing = [video_id for video_id in requested_video_ids if video_id not in available]
+        if missing:
+            parser.error(f"Requested video IDs not found under {args.caption_dir}: {', '.join(missing)}")
+        requested_set = set(requested_video_ids)
+        video_ids = [video_id for video_id in video_ids if video_id in requested_set]
 
     logger.info(f"Found {len(video_ids)} videos to process")
 

@@ -1,0 +1,1156 @@
+{
+  "movies": [
+    {
+      "id": 1,
+      "title_ch": "肖申克的救赎",
+      "title_en": "The Shawshank Redemption",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Shawshank_Redemption.mkv",
+      "bvid": "BV1us41117yA",
+      "compressed_file": "movie_zip/The_Shawshank_Redemption_360p.mp4"
+    },
+    {
+      "id": 2,
+      "title_ch": "霸王别姬",
+      "title_en": "Farewell My Concubine",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Farewell_My_Concubine.mkv",
+      "bvid": "BV1Ps41117Zj",
+      "compressed_file": "movie_zip/Farewell_My_Concubine_360p.mp4"
+    },
+    {
+      "id": 3,
+      "title_ch": "阿甘正传",
+      "title_en": "Forrest Gump",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Forrest_Gump.mkv",
+      "bvid": "BV1xf4y1q7Wp",
+      "compressed_file": "movie_zip/Forrest_Gump_360p.mp4"
+    },
+    {
+      "id": 4,
+      "title_ch": "这个杀手不太冷",
+      "title_en": "Léon: The Professional",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Lon_The_Professional.mkv",
+      "bvid": "BV14s411C7Dk",
+      "compressed_file": "movie_zip/Lon_The_Professional_360p.mp4"
+    },
+    {
+      "id": 5,
+      "title_ch": "泰坦尼克号",
+      "title_en": "Titanic",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Titanic.mkv",
+      "bvid": "BV1as411C7BQ",
+      "compressed_file": "movie_zip/Titanic_360p.mp4"
+    },
+    {
+      "id": 6,
+      "title_ch": "美丽人生",
+      "title_en": "Life Is Beautiful",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Life_Is_Beautiful.mkv",
+      "bvid": "BV18x411S7CM",
+      "compressed_file": "movie_zip/Life_Is_Beautiful_360p.mp4"
+    },
+    {
+      "id": 7,
+      "title_ch": "千与千寻",
+      "title_en": "Spirited Away",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Spirited_Away.mkv",
+      "bvid": "BV1xs411y7bs",
+      "compressed_file": "movie_zip/Spirited_Away_360p.mp4"
+    },
+    {
+      "id": 8,
+      "title_ch": "辛德勒的名单",
+      "title_en": "Schindler's List",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Schindlers_List.mkv",
+      "bvid": "BV1ks411C7uF",
+      "compressed_file": "movie_zip/Schindlers_List_360p.mp4"
+    },
+    {
+      "id": 9,
+      "title_ch": "盗梦空间",
+      "title_en": "Inception",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Inception.mkv",
+      "bvid": "BV1Zs411v7wi",
+      "compressed_file": "movie_zip/Inception_360p.mp4"
+    },
+    {
+      "id": 10,
+      "title_ch": "忠犬八公的故事",
+      "title_en": "Hachi: A Dog's Tale",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Hachi_A_Dogs_Tale.mkv",
+      "bvid": "BV1ix411Y7pN",
+      "compressed_file": "movie_zip/Hachi_A_Dogs_Tale_360p.mp4"
+    },
+    {
+      "id": 11,
+      "title_ch": "星际穿越",
+      "title_en": "Interstellar",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Interstellar.mkv",
+      "bvid": "BV1as411y7nD",
+      "compressed_file": "movie_zip/Interstellar_360p.mp4"
+    },
+    {
+      "id": 12,
+      "title_ch": "楚门的世界",
+      "title_en": "The Truman Show",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Truman_Show.mkv",
+      "bvid": "BV1wx411h7YR",
+      "compressed_file": "movie_zip/The_Truman_Show_360p.mp4"
+    },
+    {
+      "id": 13,
+      "title_ch": "海上钢琴师",
+      "title_en": "The Legend of 1900",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Legend_of_1900.mkv",
+      "bvid": "BV1Rs411e7Zs",
+      "compressed_file": "movie_zip/The_Legend_of_1900_360p.mp4"
+    },
+    {
+      "id": 15,
+      "title_ch": "机器人总动员",
+      "title_en": "WALL·E",
+      "source_file": "/mnt/nas/share/home/lxh/movies/WALLE.mkv",
+      "bvid": "BV1ws411y7fs",
+      "compressed_file": "movie_zip/WALLE_360p.mp4"
+    },
+    {
+      "id": 16,
+      "title_ch": "放牛班的春天",
+      "title_en": "The Chorus",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Chorus.mkv",
+      "bvid": "BV1Nx411z7yc",
+      "compressed_file": "movie_zip/The_Chorus_360p.mp4"
+    },
+    {
+      "id": 17,
+      "title_ch": "无间道",
+      "title_en": "Infernal Affairs",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Infernal_Affairs.mkv",
+      "bvid": "BV1zs411y7By",
+      "compressed_file": "movie_zip/Infernal_Affairs_360p.mp4"
+    },
+    {
+      "id": 18,
+      "title_ch": "疯狂动物城",
+      "title_en": "Zootopia",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Zootopia.mkv",
+      "bvid": "BV1kfhUe1EiX",
+      "compressed_file": "movie_zip/Zootopia_360p.mp4"
+    },
+    {
+      "id": 19,
+      "title_ch": "大话西游之大圣娶亲",
+      "title_en": "A Chinese Odyssey Part Two: Cinderella",
+      "source_file": "/mnt/nas/share/home/lxh/movies/A_Chinese_Odyssey_Part_Two_Cinderella.mkv",
+      "bvid": "",
+      "compressed_file": "movie_zip/A_Chinese_Odyssey_Part_Two_Cinderella_360p.mp4"
+    },
+    {
+      "id": 20,
+      "title_ch": "熔炉",
+      "title_en": "Silenced",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Silenced.mkv",
+      "bvid": "BV18x411v7Q8",
+      "compressed_file": "movie_zip/Silenced_360p.mp4"
+    },
+    {
+      "id": 21,
+      "title_ch": "教父",
+      "title_en": "The Godfather",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Godfather.mkv",
+      "bvid": "BV1Ds411v79H",
+      "compressed_file": "movie_zip/The_Godfather_360p.mp4"
+    },
+    {
+      "id": 23,
+      "title_ch": "龙猫",
+      "title_en": "My Neighbor Totoro",
+      "source_file": "/mnt/nas/share/home/lxh/movies/My_Neighbor_Totoro.mkv",
+      "bvid": "BV1yb411p7iH",
+      "compressed_file": "movie_zip/My_Neighbor_Totoro_360p.mp4"
+    },
+    {
+      "id": 24,
+      "title_ch": "怦然心动",
+      "title_en": "Flipped",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Flipped.mkv",
+      "bvid": "BV1Qs41187Uh",
+      "compressed_file": "movie_zip/Flipped_360p.mp4"
+    },
+    {
+      "id": 25,
+      "title_ch": "控方证人",
+      "title_en": "Witness for the Prosecution",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Witness_for_the_Prosecution.mkv",
+      "bvid": "BV1ib411F7Zw",
+      "compressed_file": "movie_zip/Witness_for_the_Prosecution_360p.mp4"
+    },
+    {
+      "id": 26,
+      "title_ch": "触不可及",
+      "title_en": "The Intouchables",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Intouchables.mkv",
+      "bvid": "BV1Kx411p7P8",
+      "compressed_file": "movie_zip/The_Intouchables_360p.mp4"
+    },
+    {
+      "id": 27,
+      "title_ch": "蝙蝠侠前传2：黑暗骑士",
+      "title_en": "The Dark Knight",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Dark_Knight.mkv",
+      "bvid": "BV19CZGY5EPk",
+      "compressed_file": "movie_zip/The_Dark_Knight_360p.mp4"
+    },
+    {
+      "id": 28,
+      "title_ch": "末代皇帝",
+      "title_en": "The Last Emperor",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Last_Emperor.mkv",
+      "bvid": "BV1Mx411y7qG",
+      "compressed_file": "movie_zip/The_Last_Emperor_360p.mp4"
+    },
+    {
+      "id": 29,
+      "title_ch": "寻梦环游记",
+      "title_en": "Coco",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Coco.mkv",
+      "bvid": "BV1pW411e7oF",
+      "compressed_file": "movie_zip/Coco_360p.mp4"
+    },
+    {
+      "id": 31,
+      "title_ch": "指环王3：国王归来",
+      "title_en": "The Lord of the Rings: The Return of the King",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Lord_of_the_Rings_The_Return_of_the_King.mkv",
+      "bvid": "BV11x41157gT",
+      "compressed_file": "movie_zip/The_Lord_of_the_Rings_The_Return_of_the_King_360p.mp4"
+    },
+    {
+      "id": 32,
+      "title_ch": "乱世佳人",
+      "title_en": "Gone with the Wind",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Gone_with_the_Wind.mkv",
+      "bvid": "BV1P441117e2",
+      "compressed_file": "movie_zip/Gone_with_the_Wind_360p.mp4"
+    },
+    {
+      "id": 33,
+      "title_ch": "何以为家",
+      "title_en": "Capernaum",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Capernaum.mkv",
+      "bvid": "BV1T38nzhEW5",
+      "compressed_file": "movie_zip/Capernaum_360p.mp4"
+    },
+    {
+      "id": 34,
+      "title_ch": "哈利·波特与魔法石",
+      "title_en": "Harry Potter and the Philosopher's Stone",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Harry_Potter_and_the_Philosophers_Stone.mkv",
+      "bvid": "BV1Es41117ub",
+      "compressed_file": "movie_zip/Harry_Potter_and_the_Philosophers_Stone_360p.mp4"
+    },
+    {
+      "id": 35,
+      "title_ch": "飞屋环游记",
+      "title_en": "Up",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Up.mkv",
+      "bvid": "BV12M41197PY",
+      "compressed_file": "movie_zip/Up_360p.mp4"
+    },
+    {
+      "id": 36,
+      "title_ch": "素媛",
+      "title_en": "Hope",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Hope.mkv",
+      "bvid": "BV1ns411h7a5",
+      "compressed_file": "movie_zip/Hope_360p.mp4"
+    },
+    {
+      "id": 37,
+      "title_ch": "摔跤吧！爸爸",
+      "title_en": "Dangal",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Dangal.mkv",
+      "bvid": "BV1px411x78z",
+      "compressed_file": "movie_zip/Dangal_360p.mp4"
+    },
+    {
+      "id": 38,
+      "title_ch": "少年派的奇幻漂流",
+      "title_en": "Life of Pi",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Life_of_Pi.mkv",
+      "bvid": "BV1ts411r7Cr",
+      "compressed_file": "movie_zip/Life_of_Pi_360p.mp4"
+    },
+    {
+      "id": 39,
+      "title_ch": "十二怒汉",
+      "title_en": "12 Angry Men",
+      "source_file": "/mnt/nas/share/home/lxh/movies/12_Angry_Men.mkv",
+      "bvid": "BV1rx411t742",
+      "compressed_file": "movie_zip/12_Angry_Men_360p.mp4"
+    },
+    {
+      "id": 40,
+      "title_ch": "哈尔的移动城堡",
+      "title_en": "Howl's Moving Castle",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Howls_Moving_Castle.mkv",
+      "bvid": "BV1em4y1A7kW",
+      "compressed_file": "movie_zip/Howls_Moving_Castle_360p.mp4"
+    },
+    {
+      "id": 42,
+      "title_ch": "我不是药神",
+      "title_en": "Dying to Survive",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Dying_to_Survive.mkv",
+      "bvid": "BV1NDmjBgEwQ",
+      "compressed_file": "movie_zip/Dying_to_Survive_360p.mp4"
+    },
+    {
+      "id": 43,
+      "title_ch": "大话西游之月光宝盒",
+      "title_en": "A Chinese Odyssey Part One: Pandora's Box",
+      "source_file": "/mnt/nas/share/home/lxh/movies/A_Chinese_Odyssey_Part_One_Pandoras_Box.mkv",
+      "bvid": "BV1Vs411i7U2",
+      "compressed_file": "movie_zip/A_Chinese_Odyssey_Part_One_Pandoras_Box_360p.mp4"
+    },
+    {
+      "id": 44,
+      "title_ch": "天空之城",
+      "title_en": "Castle in the Sky",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Castle_in_the_Sky.mkv",
+      "bvid": "BV1mj421R7DR",
+      "compressed_file": "movie_zip/Castle_in_the_Sky_360p.mp4"
+    },
+    {
+      "id": 45,
+      "title_ch": "天堂电影院",
+      "title_en": "Cinema Paradiso",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Cinema_Paradiso.mkv",
+      "bvid": "BV1rW411C7iv",
+      "compressed_file": "movie_zip/Cinema_Paradiso_360p.mp4"
+    },
+    {
+      "id": 46,
+      "title_ch": "闻香识女人",
+      "title_en": "Scent of a Woman",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Scent_of_a_Woman.mkv",
+      "bvid": "BV1NW411h79T",
+      "compressed_file": "movie_zip/Scent_of_a_Woman_360p.mp4"
+    },
+    {
+      "id": 47,
+      "title_ch": "指环王2：双塔奇兵",
+      "title_en": "The Lord of the Rings: The Two Towers",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Lord_of_the_Rings_The_Two_Towers.mkv",
+      "bvid": "BV1mx411V7fk",
+      "compressed_file": "movie_zip/The_Lord_of_the_Rings_The_Two_Towers_360p.mp4"
+    },
+    {
+      "id": 48,
+      "title_ch": "罗马假日",
+      "title_en": "Roman Holiday",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Roman_Holiday.mkv",
+      "bvid": "BV1fx411u7ai",
+      "compressed_file": "movie_zip/Roman_Holiday_360p.mp4"
+    },
+    {
+      "id": 49,
+      "title_ch": "猫鼠游戏",
+      "title_en": "Catch Me If You Can",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Catch_Me_If_You_Can.mkv",
+      "bvid": "BV16x411n7r6",
+      "compressed_file": "movie_zip/Catch_Me_If_You_Can_360p.mp4"
+    },
+    {
+      "id": 50,
+      "title_ch": "辩护人",
+      "title_en": "The Attorney",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Attorney.mkv",
+      "bvid": "BV1sm421s7xF",
+      "compressed_file": "movie_zip/The_Attorney_360p.mp4"
+    },
+    {
+      "id": 51,
+      "title_ch": "指环王1：护戒使者",
+      "title_en": "The Lord of the Rings: The Fellowship of the Ring",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Lord_of_the_Rings_The_Fellowship_of_the_Ring.mkv",
+      "bvid": "BV1Pa411S73K",
+      "compressed_file": "movie_zip/The_Lord_of_the_Rings_The_Fellowship_of_the_Ring_360p.mp4"
+    },
+    {
+      "id": 52,
+      "title_ch": "大闹天宫",
+      "title_en": "The Monkey King",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Monkey_King.mkv",
+      "bvid": "",
+      "compressed_file": "movie_zip/The_Monkey_King_360p.mp4"
+    },
+    {
+      "id": 53,
+      "title_ch": "钢琴家",
+      "title_en": "The Pianist",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Pianist.mkv",
+      "bvid": "BV1hW411s7P4",
+      "compressed_file": "movie_zip/The_Pianist_360p.mp4"
+    },
+    {
+      "id": 54,
+      "title_ch": "狮子王",
+      "title_en": "The Lion King",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Lion_King.mkv",
+      "bvid": "BV1vs411C7kF",
+      "compressed_file": "movie_zip/The_Lion_King_360p.mp4"
+    },
+    {
+      "id": 55,
+      "title_ch": "教父2",
+      "title_en": "The Godfather Part II",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Godfather_Part_II.mkv",
+      "bvid": "BV1us411i7Nx",
+      "compressed_file": "movie_zip/The_Godfather_Part_II_360p.mp4"
+    },
+    {
+      "id": 56,
+      "title_ch": "死亡诗社",
+      "title_en": "Dead Poets Society",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Dead_Poets_Society.mkv",
+      "bvid": "BV1Nj411r7fv",
+      "compressed_file": "movie_zip/Dead_Poets_Society_360p.mp4"
+    },
+    {
+      "id": 57,
+      "title_ch": "搏击俱乐部",
+      "title_en": "Fight Club",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Fight_Club.mkv",
+      "bvid": "BV1VoE1z2EFz",
+      "compressed_file": "movie_zip/Fight_Club_360p.mp4"
+    },
+    {
+      "id": 58,
+      "title_ch": "让子弹飞",
+      "title_en": "Let the Bullets Fly",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Let_the_Bullets_Fly.mkv",
+      "bvid": "BV1CG4y1a7wR",
+      "compressed_file": "movie_zip/Let_the_Bullets_Fly_360p.mp4"
+    },
+    {
+      "id": 59,
+      "title_ch": "黑客帝国",
+      "title_en": "The Matrix",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Matrix.mkv",
+      "bvid": "BV1Ls411C7we",
+      "compressed_file": "movie_zip/The_Matrix_360p.mp4"
+    },
+    {
+      "id": 60,
+      "title_ch": "绿皮书",
+      "title_en": "Green Book",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Green_Book.mkv",
+      "bvid": "BV1Bg4y1X7b2",
+      "compressed_file": "movie_zip/Green_Book_360p.mp4"
+    },
+    {
+      "id": 62,
+      "title_ch": "美丽心灵",
+      "title_en": "A Beautiful Mind",
+      "source_file": "/mnt/nas/share/home/lxh/movies/A_Beautiful_Mind.mkv",
+      "bvid": "BV1Cx411S7Sw",
+      "compressed_file": "movie_zip/A_Beautiful_Mind_360p.mp4"
+    },
+    {
+      "id": 63,
+      "title_ch": "海蒂和爷爷",
+      "title_en": "Heidi",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Heidi.mkv",
+      "bvid": "BV11W411t7HN",
+      "compressed_file": "movie_zip/Heidi_360p.mp4"
+    },
+    {
+      "id": 64,
+      "title_ch": "窃听风暴",
+      "title_en": "The Lives of Others",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Lives_of_Others.mkv",
+      "bvid": "BV1vx411J7nS",
+      "compressed_file": "movie_zip/The_Lives_of_Others_360p.mp4"
+    },
+    {
+      "id": 65,
+      "title_ch": "本杰明·巴顿奇事",
+      "title_en": "The Curious Case of Benjamin Button",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Curious_Case_of_Benjamin_Button.mkv",
+      "bvid": "BV1Sj411i7hY",
+      "compressed_file": "movie_zip/The_Curious_Case_of_Benjamin_Button_360p.mp4"
+    },
+    {
+      "id": 66,
+      "title_ch": "两杆大烟枪",
+      "title_en": "Lock, Stock and Two Smoking Barrels",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Lock_Stock_and_Two_Smoking_Barrels.mkv",
+      "bvid": "BV1Fx411V7T7",
+      "compressed_file": "movie_zip/Lock_Stock_and_Two_Smoking_Barrels_360p.mp4"
+    },
+    {
+      "id": 67,
+      "title_ch": "情书",
+      "title_en": "Love Letter",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Love_Letter.mkv",
+      "bvid": "BV1Cx411y79H",
+      "compressed_file": "movie_zip/Love_Letter_360p.mp4"
+    },
+    {
+      "id": 68,
+      "title_ch": "看不见的客人",
+      "title_en": "The Invisible Guest",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Invisible_Guest.mkv",
+      "bvid": "BV1gs411L7Jc",
+      "compressed_file": "movie_zip/The_Invisible_Guest_360p.mp4"
+    },
+    {
+      "id": 69,
+      "title_ch": "飞越疯人院",
+      "title_en": "One Flew Over the Cuckoo's Nest",
+      "source_file": "/mnt/nas/share/home/lxh/movies/One_Flew_Over_the_Cuckoos_Nest.mkv",
+      "bvid": "BV1pW411n75Y",
+      "compressed_file": "movie_zip/One_Flew_Over_the_Cuckoos_Nest_360p.mp4"
+    },
+    {
+      "id": 70,
+      "title_ch": "穿条纹睡衣的男孩",
+      "title_en": "The Boy in the Striped Pyjamas",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Boy_in_the_Striped_Pyjamas.mkv",
+      "bvid": "BV17s411w7e9",
+      "compressed_file": "movie_zip/The_Boy_in_the_Striped_Pyjamas_360p.mp4"
+    },
+    {
+      "id": 71,
+      "title_ch": "西西里的美丽传说",
+      "title_en": "Malèna",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Malna.mkv",
+      "bvid": "BV1aJ411X7P8",
+      "compressed_file": "movie_zip/Malna_360p.mp4"
+    },
+    {
+      "id": 72,
+      "title_ch": "拯救大兵瑞恩",
+      "title_en": "Saving Private Ryan",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Saving_Private_Ryan.mkv",
+      "bvid": "BV1rW411b762",
+      "compressed_file": "movie_zip/Saving_Private_Ryan_360p.mp4"
+    },
+    {
+      "id": 73,
+      "title_ch": "小鞋子",
+      "title_en": "Children of Heaven",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Children_of_Heaven.mkv",
+      "bvid": "BV1BW411T7gP",
+      "compressed_file": "movie_zip/Children_of_Heaven_360p.mp4"
+    },
+    {
+      "id": 74,
+      "title_ch": "音乐之声",
+      "title_en": "The Sound of Music",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Sound_of_Music.mkv",
+      "bvid": "BV1Tg4y1A7fw",
+      "compressed_file": "movie_zip/The_Sound_of_Music_360p.mp4"
+    },
+    {
+      "id": 75,
+      "title_ch": "阿凡达",
+      "title_en": "Avatar",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Avatar.mkv",
+      "bvid": "BV13s411y7Qo",
+      "compressed_file": "movie_zip/Avatar_360p.mp4"
+    },
+    {
+      "id": 76,
+      "title_ch": "海豚湾",
+      "title_en": "The Cove",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Cove.mkv",
+      "bvid": "BV1hs411778G",
+      "compressed_file": "movie_zip/The_Cove_360p.mp4"
+    },
+    {
+      "id": 77,
+      "title_ch": "致命魔术",
+      "title_en": "The Prestige",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Prestige.mkv",
+      "bvid": "BV1fx411D74H",
+      "compressed_file": "movie_zip/The_Prestige_360p.mp4"
+    },
+    {
+      "id": 78,
+      "title_ch": "美国往事",
+      "title_en": "Once Upon a Time in America",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Once_Upon_a_Time_in_America.mkv",
+      "bvid": "BV1hW411H7Z6",
+      "compressed_file": "movie_zip/Once_Upon_a_Time_in_America_360p.mp4"
+    },
+    {
+      "id": 79,
+      "title_ch": "沉默的羔羊",
+      "title_en": "The Silence of the Lambs",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Silence_of_the_Lambs.mkv",
+      "bvid": "BV1es411k7M5",
+      "compressed_file": "movie_zip/The_Silence_of_the_Lambs_360p.mp4"
+    },
+    {
+      "id": 80,
+      "title_ch": "禁闭岛",
+      "title_en": "Shutter Island",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Shutter_Island.mkv",
+      "bvid": "BV1zx411879p",
+      "compressed_file": "movie_zip/Shutter_Island_360p.mp4"
+    },
+    {
+      "id": 81,
+      "title_ch": "蝴蝶效应",
+      "title_en": "The Butterfly Effect",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Butterfly_Effect.mkv",
+      "bvid": "BV15W411t7LJ",
+      "compressed_file": "movie_zip/The_Butterfly_Effect_360p.mp4"
+    },
+    {
+      "id": 82,
+      "title_ch": "低俗小说",
+      "title_en": "Pulp Fiction",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Pulp_Fiction.mkv",
+      "bvid": "BV1ms411Y7oi",
+      "compressed_file": "movie_zip/Pulp_Fiction_360p.mp4"
+    },
+    {
+      "id": 83,
+      "title_ch": "心灵捕手",
+      "title_en": "Good Will Hunting",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Good_Will_Hunting.mkv",
+      "bvid": "BV1LkU9BPEFC",
+      "compressed_file": "movie_zip/Good_Will_Hunting_360p.mp4"
+    },
+    {
+      "id": 84,
+      "title_ch": "布达佩斯大饭店",
+      "title_en": "The Grand Budapest Hotel",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Grand_Budapest_Hotel.mkv",
+      "bvid": "BV1MW411L7Ld",
+      "compressed_file": "movie_zip/The_Grand_Budapest_Hotel_360p.mp4"
+    },
+    {
+      "id": 85,
+      "title_ch": "春光乍泄",
+      "title_en": "Happy Together",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Happy_Together.mkv",
+      "bvid": "BV1Nz421Z7FZ",
+      "compressed_file": "movie_zip/Happy_Together_360p.mp4"
+    },
+    {
+      "id": 86,
+      "title_ch": "七宗罪",
+      "title_en": "Se7en",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Se7en.mkv",
+      "bvid": "BV1pKm2BQEto",
+      "compressed_file": "movie_zip/Se7en_360p.mp4"
+    },
+    {
+      "id": 87,
+      "title_ch": "哈利·波特与死亡圣器（下）",
+      "title_en": "Harry Potter and the Deathly Hallows: Part 2",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Harry_Potter_and_the_Deathly_Hallows_Part_2.mkv",
+      "bvid": "BV1Rs411t7Lg",
+      "compressed_file": "movie_zip/Harry_Potter_and_the_Deathly_Hallows_Part_2_360p.mp4"
+    },
+    {
+      "id": 88,
+      "title_ch": "摩登时代",
+      "title_en": "Modern Times",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Modern_Times.mkv",
+      "bvid": "BV1gx411D7hk",
+      "compressed_file": "movie_zip/Modern_Times_360p.mp4"
+    },
+    {
+      "id": 89,
+      "title_ch": "喜剧之王",
+      "title_en": "The King of Comedy",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_King_of_Comedy.mkv",
+      "bvid": "BV1K24y1v7jY",
+      "compressed_file": "movie_zip/The_King_of_Comedy_360p.mp4"
+    },
+    {
+      "id": 90,
+      "title_ch": "被嫌弃的松子的一生",
+      "title_en": "Memories of Matsuko",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Memories_of_Matsuko.mkv",
+      "bvid": "BV1Ys411e7Qg",
+      "compressed_file": "movie_zip/Memories_of_Matsuko_360p.mp4"
+    },
+    {
+      "id": 91,
+      "title_ch": "致命ID",
+      "title_en": "Identity",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Identity.mkv",
+      "bvid": "BV13crLBAExT",
+      "compressed_file": "movie_zip/Identity_360p.mp4"
+    },
+    {
+      "id": 92,
+      "title_ch": "杀人回忆",
+      "title_en": "Memories of Murder",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Memories_of_Murder.mkv",
+      "bvid": "BV1R4411A7TJ",
+      "compressed_file": "movie_zip/Memories_of_Murder_360p.mp4"
+    },
+    {
+      "id": 93,
+      "title_ch": "加勒比海盗1：黑珍珠号的诅咒",
+      "title_en": "Pirates of the Caribbean: The Curse of the Black Pearl",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Pirates_of_the_Caribbean_The_Curse_of_the_Black_Pearl.mkv",
+      "bvid": "BV1ds411C7MR",
+      "compressed_file": "movie_zip/Pirates_of_the_Caribbean_The_Curse_of_the_Black_Pearl_360p.mp4"
+    },
+    {
+      "id": 94,
+      "title_ch": "剪刀手爱德华",
+      "title_en": "Edward Scissorhands",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Edward_Scissorhands.mkv",
+      "bvid": "BV1Kx411r7Kw",
+      "compressed_file": "movie_zip/Edward_Scissorhands_360p.mp4"
+    },
+    {
+      "id": 95,
+      "title_ch": "勇敢的心",
+      "title_en": "Braveheart",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Braveheart.mkv",
+      "bvid": "BV1VW411q7mF",
+      "compressed_file": "movie_zip/Braveheart_360p.mp4"
+    },
+    {
+      "id": 96,
+      "title_ch": "狩猎",
+      "title_en": "The Hunt",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Hunt.mkv",
+      "bvid": "BV1rs411g7hj",
+      "compressed_file": "movie_zip/The_Hunt_360p.mp4"
+    },
+    {
+      "id": 97,
+      "title_ch": "请以你的名字呼唤我",
+      "title_en": "Call Me by Your Name",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Call_Me_by_Your_Name.mkv",
+      "bvid": "BV1tAjRzoEJ4",
+      "compressed_file": "movie_zip/Call_Me_by_Your_Name_360p.mp4"
+    },
+    {
+      "id": 98,
+      "title_ch": "红辣椒",
+      "title_en": "Paprika",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Paprika.mkv",
+      "bvid": "BV1ds411Y7um",
+      "compressed_file": "movie_zip/Paprika_360p.mp4"
+    },
+    {
+      "id": 99,
+      "title_ch": "断背山",
+      "title_en": "Brokeback Mountain",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Brokeback_Mountain.mkv",
+      "bvid": "BV1Ls411s78n",
+      "compressed_file": "movie_zip/Brokeback_Mountain_360p.mp4"
+    },
+    {
+      "id": 100,
+      "title_ch": "7号房的礼物",
+      "title_en": "Miracle in Cell No. 7",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Miracle_in_Cell_No_7.mkv",
+      "bvid": "BV1gb4AzLE2Q",
+      "compressed_file": "movie_zip/Miracle_in_Cell_No_7_360p.mp4"
+    },
+    {
+      "id": 101,
+      "title_ch": "天使爱美丽",
+      "title_en": "Amelie",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Amelie.mkv",
+      "bvid": "BV1UW411a7Nj",
+      "compressed_file": "movie_zip/Amelie_360p.mp4"
+    },
+    {
+      "id": 102,
+      "title_ch": "幽灵公主",
+      "title_en": "Princess Mononoke",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Princess_Mononoke.mkv",
+      "bvid": "BV1fM411D7Te",
+      "compressed_file": "movie_zip/Princess_Mononoke_360p.mp4"
+    },
+    {
+      "id": 103,
+      "title_ch": "功夫",
+      "title_en": "Kung Fu Hustle",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Kung_Fu_Hustle.mkv",
+      "bvid": "BV1zh4y1N7Jc",
+      "compressed_file": "movie_zip/Kung_Fu_Hustle_360p.mp4"
+    },
+    {
+      "id": 104,
+      "title_ch": "超脱",
+      "title_en": "Detachment",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Detachment.mkv",
+      "bvid": "BV1qW411U7N1",
+      "compressed_file": "movie_zip/Detachment_360p.mp4"
+    },
+    {
+      "id": 105,
+      "title_ch": "小森林 夏秋篇",
+      "title_en": "Little Forest Summer Autumn",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Little_Forest_Summer_Autumn.mkv",
+      "bvid": "BV1jx411a7rL",
+      "compressed_file": "movie_zip/Little_Forest_Summer_Autumn_360p.mp4"
+    },
+    {
+      "id": 106,
+      "title_ch": "第六感",
+      "title_en": "The Sixth Sense",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Sixth_Sense.mkv",
+      "bvid": "BV17x411q77h",
+      "compressed_file": "movie_zip/The_Sixth_Sense_360p.mp4"
+    },
+    {
+      "id": 107,
+      "title_ch": "阳光灿烂的日子",
+      "title_en": "In the Heat of the Sun",
+      "source_file": "/mnt/nas/share/home/lxh/movies/In_the_Heat_of_the_Sun.mkv",
+      "bvid": "BV1zW411n7pD",
+      "compressed_file": "movie_zip/In_the_Heat_of_the_Sun_360p.mp4"
+    },
+    {
+      "id": 108,
+      "title_ch": "重庆森林",
+      "title_en": "Chungking Express",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Chungking_Express.mkv",
+      "bvid": "BV12s411r7Hx",
+      "compressed_file": "movie_zip/Chungking_Express_360p.mp4"
+    },
+    {
+      "id": 109,
+      "title_ch": "唐伯虎点秋香",
+      "title_en": "Flirting Scholar",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Flirting_Scholar.mkv",
+      "bvid": "BV1RA411Z7gv",
+      "compressed_file": "movie_zip/Flirting_Scholar_360p.mp4"
+    },
+    {
+      "id": 110,
+      "title_ch": "爱在黎明破晓前",
+      "title_en": "Before Sunrise",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Before_Sunrise.mkv",
+      "bvid": "BV1nb411C7BG",
+      "compressed_file": "movie_zip/Before_Sunrise_360p.mp4"
+    },
+    {
+      "id": 111,
+      "title_ch": "人生果实",
+      "title_en": "Life Is Fruity",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Life_Is_Fruity.mp4",
+      "bvid": "BV1Jf4y1a7gG",
+      "compressed_file": "movie_zip/Life_Is_Fruity_360p.mp4"
+    },
+    {
+      "id": 113,
+      "title_ch": "蝙蝠侠前传3：黑暗骑士崛起",
+      "title_en": "The Dark Knight Rises",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Dark_Knight_Rises.mkv",
+      "bvid": "BV1hxW6eDEUt",
+      "compressed_file": "movie_zip/The_Dark_Knight_Rises_360p.mp4"
+    },
+    {
+      "id": 114,
+      "title_ch": "小森林 冬春篇",
+      "title_en": "Little Forest Winter Spring",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Little_Forest_Winter_Spring.mkv",
+      "bvid": "BV1Sx411a7K8",
+      "compressed_file": "movie_zip/Little_Forest_Winter_Spring_360p.mp4"
+    },
+    {
+      "id": 115,
+      "title_ch": "菊次郎的夏天",
+      "title_en": "Kikujiro",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Kikujiro.mkv",
+      "bvid": "BV1ws411p7AX",
+      "compressed_file": "movie_zip/Kikujiro_360p.mp4"
+    },
+    {
+      "id": 116,
+      "title_ch": "消失的爱人",
+      "title_en": "Gone Girl",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Gone_Girl.mkv",
+      "bvid": "",
+      "compressed_file": "movie_zip/Gone_Girl_360p.mp4"
+    },
+    {
+      "id": 117,
+      "title_ch": "入殓师",
+      "title_en": "Departures",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Departures.mkv",
+      "bvid": "BV19W411v7AD",
+      "compressed_file": "movie_zip/Departures_360p.mp4"
+    },
+    {
+      "id": 118,
+      "title_ch": "无人知晓",
+      "title_en": "Nobody Knows",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Nobody_Knows.mkv",
+      "bvid": "BV15s411G7Lx",
+      "compressed_file": "movie_zip/Nobody_Knows_360p.mp4"
+    },
+    {
+      "id": 119,
+      "title_ch": "哈利·波特3：阿兹卡班的囚徒",
+      "title_en": "Harry Potter and the Prisoner of Azkaban",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Harry_Potter_and_the_Prisoner_of_Azkaban.mkv",
+      "bvid": "BV1gs411C7zv",
+      "compressed_file": "movie_zip/Harry_Potter_and_the_Prisoner_of_Azkaban_360p.mp4"
+    },
+    {
+      "id": 120,
+      "title_ch": "超能陆战队",
+      "title_en": "Big Hero 6",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Big_Hero_6.mkv",
+      "bvid": "BV1XTUMB8E4p",
+      "compressed_file": "movie_zip/Big_Hero_6_360p.mp4"
+    },
+    {
+      "id": 121,
+      "title_ch": "倩女幽魂",
+      "title_en": "A Chinese Ghost Story",
+      "source_file": "/mnt/nas/share/home/lxh/movies/A_Chinese_Ghost_Story.mkv",
+      "bvid": "BV1ix411L7Np",
+      "compressed_file": "movie_zip/A_Chinese_Ghost_Story_360p.mp4"
+    },
+    {
+      "id": 122,
+      "title_ch": "侧耳倾听",
+      "title_en": "Whisper of the Heart",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Whisper_of_the_Heart.mkv",
+      "bvid": "BV1C441157hM",
+      "compressed_file": "movie_zip/Whisper_of_the_Heart_360p.mp4"
+    },
+    {
+      "id": 123,
+      "title_ch": "完美的世界",
+      "title_en": "A Perfect World",
+      "source_file": "/mnt/nas/share/home/lxh/movies/A_Perfect_World.mkv",
+      "bvid": "BV1at411G77h",
+      "compressed_file": "movie_zip/A_Perfect_World_360p.mp4"
+    },
+    {
+      "id": 124,
+      "title_ch": "借东西的小人阿莉埃蒂",
+      "title_en": "The Secret World of Arrietty",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Secret_World_of_Arrietty.mkv",
+      "bvid": "BV1y341127qq",
+      "compressed_file": "movie_zip/The_Secret_World_of_Arrietty_360p.mp4"
+    },
+    {
+      "id": 125,
+      "title_ch": "甜蜜蜜",
+      "title_en": "Comrades Almost a Love Story",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Comrades_Almost_a_Love_Story.mkv",
+      "bvid": "BV1ba4y1X7wX",
+      "compressed_file": "movie_zip/Comrades_Almost_a_Love_Story_360p.mp4"
+    },
+    {
+      "id": 126,
+      "title_ch": "爱在日落黄昏时",
+      "title_en": "Before Sunset",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Before_Sunset.mkv",
+      "bvid": "BV1pt411C77C",
+      "compressed_file": "movie_zip/Before_Sunset_360p.mp4"
+    },
+    {
+      "id": 127,
+      "title_ch": "萤火之森",
+      "title_en": "Hotarubi no Mori e",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Hotarubi_no_Mori_e.mkv",
+      "bvid": "BV1Hs411r7ML",
+      "compressed_file": "movie_zip/Hotarubi_no_Mori_e_360p.mp4"
+    },
+    {
+      "id": 128,
+      "title_ch": "驯龙高手",
+      "title_en": "How to Train Your Dragon",
+      "source_file": "/mnt/nas/share/home/lxh/movies/How_to_Train_Your_Dragon.mkv",
+      "bvid": "BV1jma8zyE9d",
+      "compressed_file": "movie_zip/How_to_Train_Your_Dragon_360p.mp4"
+    },
+    {
+      "id": 129,
+      "title_ch": "玛丽和马克思",
+      "title_en": "Mary and Max",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Mary_and_Max.mkv",
+      "bvid": "BV1XW411B7op",
+      "compressed_file": "movie_zip/Mary_and_Max_360p.mp4"
+    },
+    {
+      "id": 130,
+      "title_ch": "幸福终点站",
+      "title_en": "The Terminal",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Terminal.mkv",
+      "bvid": "BV1sW411W7i3",
+      "compressed_file": "movie_zip/The_Terminal_360p.mp4"
+    },
+    {
+      "id": 131,
+      "title_ch": "天书奇谭",
+      "title_en": "The Legend of Sealed Book",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Legend_of_Sealed_Book.mkv",
+      "bvid": "BV1fx411b7kM",
+      "compressed_file": "movie_zip/The_Legend_of_Sealed_Book_360p.mp4"
+    },
+    {
+      "id": 132,
+      "title_ch": "告白",
+      "title_en": "Confessions",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Confessions.mkv",
+      "bvid": "BV1Cs411b7Qa",
+      "compressed_file": "movie_zip/Confessions_360p.mp4"
+    },
+    {
+      "id": 133,
+      "title_ch": "哈利·波特2：密室",
+      "title_en": "Harry Potter and the Chamber of Secrets",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Harry_Potter_and_the_Chamber_of_Secrets.mkv",
+      "bvid": "BV1ts41117Tq",
+      "compressed_file": "movie_zip/Harry_Potter_and_the_Chamber_of_Secrets_360p.mp4"
+    },
+    {
+      "id": 134,
+      "title_ch": "大鱼",
+      "title_en": "Big Fish",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Big_Fish.mkv",
+      "bvid": "BV1Lx411k7dK",
+      "compressed_file": "movie_zip/Big_Fish_360p.mp4"
+    },
+    {
+      "id": 135,
+      "title_ch": "阳光姐妹淘",
+      "title_en": "Sunny",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Sunny.mkv",
+      "bvid": "BV1EE411475H",
+      "compressed_file": "movie_zip/Sunny_360p.mp4"
+    },
+    {
+      "id": 136,
+      "title_ch": "射雕英雄传之东成西就",
+      "title_en": "The Eagle Shooting Heroes",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Eagle_Shooting_Heroes.mkv",
+      "bvid": "BV1cs411e7jy",
+      "compressed_file": "movie_zip/The_Eagle_Shooting_Heroes_360p.mp4"
+    },
+    {
+      "id": 137,
+      "title_ch": "怪兽电力公司",
+      "title_en": "Monsters, Inc.",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Monsters_Inc.mkv",
+      "bvid": "BV1AW411V74p",
+      "compressed_file": "movie_zip/Monsters_Inc_360p.mp4"
+    },
+    {
+      "id": 138,
+      "title_ch": "恐怖直播",
+      "title_en": "The Terror Live",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Terror_Live.mkv",
+      "bvid": "BV1o44y1Z73p",
+      "compressed_file": "movie_zip/The_Terror_Live_360p.mp4"
+    },
+    {
+      "id": 139,
+      "title_ch": "神偷奶爸",
+      "title_en": "Despicable Me",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Despicable_Me.mkv",
+      "bvid": "BV1TG2xBPEJZ",
+      "compressed_file": "movie_zip/Despicable_Me_360p.mp4"
+    },
+    {
+      "id": 140,
+      "title_ch": "时空恋旅人",
+      "title_en": "About Time",
+      "source_file": "/mnt/nas/share/home/lxh/movies/About_Time.mkv",
+      "bvid": "BV1Lx411M7kF",
+      "compressed_file": "movie_zip/About_Time_360p.mp4"
+    },
+    {
+      "id": 141,
+      "title_ch": "玩具总动员3",
+      "title_en": "Toy Story 3",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Toy_Story_3.mkv",
+      "bvid": "BV1jy411a7Fu",
+      "compressed_file": "movie_zip/Toy_Story_3_360p.mp4"
+    },
+    {
+      "id": 142,
+      "title_ch": "傲慢与偏见",
+      "title_en": "Pride and Prejudice",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Pride_and_Prejudice.mkv",
+      "bvid": "BV1Ps411a7K8",
+      "compressed_file": "movie_zip/Pride_and_Prejudice_360p.mp4"
+    },
+    {
+      "id": 143,
+      "title_ch": "教父3",
+      "title_en": "The Godfather Part III",
+      "source_file": "/mnt/nas/share/home/lxh/movies/The_Godfather_Part_III.mkv",
+      "bvid": "BV1Ls411y7aw",
+      "compressed_file": "movie_zip/The_Godfather_Part_III_360p.mp4"
+    },
+    {
+      "id": 144,
+      "title_ch": "釜山行",
+      "title_en": "Train to Busan",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Train_to_Busan.mkv",
+      "bvid": "BV1bs411t7p1",
+      "compressed_file": "movie_zip/Train_to_Busan_360p.mp4"
+    },
+    {
+      "id": 145,
+      "title_ch": "血战钢锯岭",
+      "title_en": "Hacksaw Ridge",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Hacksaw_Ridge.mkv",
+      "bvid": "BV15x41117PY",
+      "compressed_file": "movie_zip/Hacksaw_Ridge_360p.mp4"
+    },
+    {
+      "id": 146,
+      "title_ch": "哪吒闹海",
+      "title_en": "Nezha Conquers the Dragon King",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Nezha_Conquers_the_Dragon_King.mkv",
+      "bvid": "BV1FW411u7Ky",
+      "compressed_file": "movie_zip/Nezha_Conquers_the_Dragon_King_360p.mp4"
+    },
+    {
+      "id": 147,
+      "title_ch": "一个叫欧维的男人决定去死",
+      "title_en": "A Man Called Ove",
+      "source_file": "/mnt/nas/share/home/lxh/movies/A_Man_Called_Ove.mkv",
+      "bvid": "BV1Qx411r7aj",
+      "compressed_file": "movie_zip/A_Man_Called_Ove_360p.mp4"
+    },
+    {
+      "id": 148,
+      "title_ch": "被解救的姜戈",
+      "title_en": "Django Unchained",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Django_Unchained.mkv",
+      "bvid": "BV1XW411J7wk",
+      "compressed_file": "movie_zip/Django_Unchained_360p.mp4"
+    },
+    {
+      "id": 149,
+      "title_ch": "七武士",
+      "title_en": "Seven Samurai",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Seven_Samurai.mkv",
+      "bvid": "BV1vx411B7ZE",
+      "compressed_file": "movie_zip/Seven_Samurai_360p.mp4"
+    },
+    {
+      "id": 150,
+      "title_ch": "未麻的部屋",
+      "title_en": "Perfect Blue",
+      "source_file": "/mnt/nas/share/home/lxh/movies/Perfect_Blue.mkv",
+      "bvid": "BV1AmswzxExW",
+      "compressed_file": "movie_zip/Perfect_Blue_360p.mp4"
+    }
+  ]
+}

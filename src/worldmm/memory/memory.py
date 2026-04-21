@@ -57,6 +57,7 @@ class WorldMemory:
         episodic_granularities: Optional[List[str]] = None,
         episodic_cache_root: str = ".cache/episodic_memory",
         qa_template_name: str = "qa_egolife",
+        reasoning_template_name: str = "memory_reasoning",
         max_rounds: int = 5,
         max_errors: int = 5,
     ):
@@ -79,6 +80,7 @@ class WorldMemory:
         self.max_rounds = max_rounds
         self.max_errors = max_errors
         self.qa_template_name = qa_template_name
+        self.reasoning_template_name = reasoning_template_name
         
         # Initialize memory subsystems
         self.episodic_memory = EpisodicMemory(
@@ -443,7 +445,7 @@ Retrieved:
         round_history: List[Dict[str, Any]] = []
         
         # Get reasoning prompt template
-        reasoning_prompt = self.prompt_template_manager.render("memory_reasoning")
+        reasoning_prompt = self.prompt_template_manager.render(self.reasoning_template_name)
         
         round_num = 0
         err_count = 0
