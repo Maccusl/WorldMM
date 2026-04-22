@@ -1,6 +1,6 @@
 import importlib.util
 import os
-from typing import Union, List
+from typing import Optional, Union, List
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -15,6 +15,20 @@ def _resolve_attn_implementation() -> str:
     return "sdpa"
 
 
+def _resolve_device_map(device: str) -> str:
+    return os.getenv("WORLDMM_TEXT_DEVICE_MAP", device)
+
+
+def _resolve_text_batch_size(default: int = 8) -> int:
+    raw_value = os.getenv("WORLDMM_TEXT_EMBED_BATCH_SIZE") or os.getenv("WORLDMM_EMBEDDING_BATCH_SIZE")
+    if not raw_value:
+        return default
+    try:
+        return max(1, int(raw_value))
+    except ValueError:
+        return default
+
+
 class Qwen3EmbeddingModel:
     """Wrapper for Qwen3 Embedding Model"""
     
@@ -24,15 +38,20 @@ class Qwen3EmbeddingModel:
         
         self.model = SentenceTransformer(
             model_name,
-            model_kwargs={"attn_implementation": _resolve_attn_implementation(), "dtype": "auto", "device_map": device},
+            model_kwargs={
+                "attn_implementation": _resolve_attn_implementation(),
+                "dtype": "auto",
+                "device_map": _resolve_device_map(device),
+            },
             tokenizer_kwargs={"padding_side": "left"},
         )
     
-    def encode_text(self, texts: Union[str, List[str]], batch_size: int = 256) -> np.ndarray:
+    def encode_text(self, texts: Union[str, List[str]], batch_size: Optional[int] = None) -> np.ndarray:
         """Encode text into embeddings"""
         if isinstance(texts, str):
             texts = [texts]
         
+        batch_size = batch_size or _resolve_text_batch_size()
         embeddings = self.model.encode(texts, batch_size=batch_size)
         return embeddings
     

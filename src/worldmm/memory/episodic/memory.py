@@ -4,6 +4,7 @@ Episodic Memory module for WorldMM.
 
 import json
 import logging
+import os
 from typing import Dict, List, Any, Optional, Tuple, Union
 from dataclasses import dataclass
 
@@ -13,6 +14,17 @@ from ...embedding import EmbeddingModel
 from hipporag import HippoRAG
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_embedding_batch_size(default: int = 8) -> int:
+    raw_value = os.getenv("WORLDMM_HIPPO_EMBEDDING_BATCH_SIZE") or os.getenv("WORLDMM_EMBEDDING_BATCH_SIZE")
+    if not raw_value:
+        return default
+    try:
+        return max(1, int(raw_value))
+    except ValueError:
+        logger.warning("Invalid embedding batch size %r; using %d", raw_value, default)
+        return default
 
 
 @dataclass
@@ -120,10 +132,12 @@ class EpisodicMemory:
     def _get_or_create_hipporag(self, granularity: str) -> HippoRAG:
         """Get or create HippoRAG instance for a granularity level."""
         if granularity not in self.hipporag:
-            self.hipporag[granularity] = HippoRAG(
+            hipporag = HippoRAG(
                 save_dir=f"{self.save_dir_root}/{granularity}",
                 llm_model=self.llm_model,
                 embedding_model=self.embedding_model)
+            hipporag.global_config.embedding_batch_size = _resolve_embedding_batch_size()
+            self.hipporag[granularity] = hipporag
         return self.hipporag[granularity]
     
     def load_captions_from_files(
