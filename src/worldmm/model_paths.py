@@ -10,6 +10,7 @@ LOCAL_MODELS_ENV = "WORLDMM_HF_MODELS_DIR"
 MODEL_PATH_ALIASES = {
     "Qwen/Qwen3-Embedding-4B": ("Qwen/Qwen3-Embedding-4B", "Qwen3-Embedding-4B", "Qwen"),
     "VLM2Vec/VLM2Vec-V2.0": ("VLM2Vec/VLM2Vec-V2.0", "VLM2Vec-V2.0", "VLM2Vec"),
+    "Qwen/Qwen2-VL-2B-Instruct": ("Qwen/Qwen2-VL-2B-Instruct", "Qwen2-VL-2B-Instruct"),
     "Qwen/Qwen3-VL-2B-Instruct": ("Qwen/Qwen3-VL-2B-Instruct", "Qwen3-VL-2B-Instruct"),
     "Qwen/Qwen3-VL-4B-Instruct": ("Qwen/Qwen3-VL-4B-Instruct", "Qwen3-VL-4B-Instruct"),
     "Qwen/Qwen3-VL-8B-Instruct": ("Qwen/Qwen3-VL-8B-Instruct", "Qwen3-VL-8B-Instruct"),

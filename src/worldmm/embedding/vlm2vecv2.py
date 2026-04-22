@@ -1,10 +1,13 @@
+import os
 from typing import List, Union, Optional, Dict, Any
+
 from PIL import Image
 import logging
 import numpy as np
 import torch
 from torch.amp.autocast_mode import autocast
 
+from worldmm.model_paths import resolve_hf_model_path
 from .VLM2Vec.src.arguments import ModelArguments, DataArguments
 from .VLM2Vec.src.model.model import MMEBModel
 from .VLM2Vec.src.model.processor import load_processor, QWEN2_VL, VLM_IMAGE_TOKENS, VLM_VIDEO_TOKENS, Qwen2_VL_process_fn
@@ -21,6 +24,7 @@ class VLM2VecV2EmbeddingModel:
     
     def __init__(self, 
                  model_name: str = "VLM2Vec/VLM2Vec-V2.0",
+                 base_model_name: Optional[str] = None,
                  pooling: str = "last",
                  normalize: bool = True,
                  device: str = "cuda"):
@@ -28,12 +32,16 @@ class VLM2VecV2EmbeddingModel:
         Initialize VLM2Vec V2.0 model
         
         Args:
-            model_name: Model name/path for VLM2Vec V2.0
+            model_name: Model name/path for VLM2Vec V2.0 LoRA adapter
+            base_model_name: Model name/path for the Qwen2-VL backbone
             pooling: Pooling strategy ('last', 'mean', etc.)
             normalize: Whether to normalize embeddings
             device: Device to run model on
         """
-        self.model_name = model_name
+        self.model_name = resolve_hf_model_path(model_name)
+        self.base_model_name = resolve_hf_model_path(
+            base_model_name or os.getenv("WORLDMM_VIS_BASE_MODEL", "Qwen/Qwen2-VL-2B-Instruct")
+        )
         self.pooling = pooling
         self.normalize = normalize
         self.device = device
@@ -47,9 +55,10 @@ class VLM2VecV2EmbeddingModel:
     
     def _load_model(self):
         """Load the VLM2Vec V2.0 model and processor"""
-        # Set up model arguments
+        # VLM2Vec-V2.0 is a LoRA adapter; load Qwen2-VL as the base backbone.
         model_args = ModelArguments(
-            model_name=self.model_name,
+            model_name=self.base_model_name,
+            checkpoint_path=self.model_name,
             pooling=self.pooling,
             normalize=self.normalize,
             model_backbone='qwen2_vl',
@@ -67,7 +76,11 @@ class VLM2VecV2EmbeddingModel:
         self.model = self.model.to(self.device, dtype=torch.bfloat16)
         self.model.eval()
         
-        logging.info(f"Successfully loaded VLM2Vec V2.0 model: {self.model_name}")
+        logging.info(
+            "Successfully loaded VLM2Vec V2.0 adapter %s with base model %s",
+            self.model_name,
+            self.base_model_name,
+        )
     
     def encode_text(self, texts: Union[str, List[str]], **kwargs) -> np.ndarray:
         """

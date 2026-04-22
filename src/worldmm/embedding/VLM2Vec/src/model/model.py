@@ -155,8 +155,10 @@ class MMEBModel(nn.Module):
         print_master(f'Loading backbone [{model_args.model_backbone}] from {model_name_or_path}')
         if model_args.model_backbone in {QWEN2_VL, QWEN2_VL_TOKENSELECTION}:
             config = AutoConfig.from_pretrained(model_args.model_name, trust_remote_code=True)
-            config._attn_implementation = "flash_attention_2"
-            config.vision_config._attn_implementation = "flash_attention_2"
+            attn_implementation = _resolve_attn_implementation()
+            config._attn_implementation = attn_implementation
+            if hasattr(config, "vision_config"):
+                config.vision_config._attn_implementation = attn_implementation
             base_model = backbone2model[model_args.model_backbone].from_pretrained(
                 model_args.model_name,
                 torch_dtype=torch.bfloat16,
