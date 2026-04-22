@@ -13,6 +13,7 @@ import argparse
 import json
 import logging
 import math
+import os
 import re
 import shlex
 import subprocess
@@ -964,7 +965,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--memory-model", default="gpt-5-mini", help="Model used for caption/memory construction.")
     parser.add_argument("--retriever-model", default="gpt-5-mini", help="LLM model for retrieval support.")
     parser.add_argument("--respond-model", default="gpt-5", help="LLM model for reasoning and final matching.")
-    parser.add_argument("--whisper-model", default="distil-large-v3.5", help="faster-whisper model for transcript generation.")
+    parser.add_argument("--whisper-model", default=os.getenv("WORLDMM_WHISPER_MODEL", "distil-large-v3.5"), help="faster-whisper model for transcript generation.")
     parser.add_argument("--whisper-batch-size", type=int, default=16, help="Concurrent files for transcription.")
     parser.add_argument("--gpu", default="0", help="GPU token list for visual feature extraction.")
     parser.add_argument("--num-frames", type=int, default=10, help="Frames sampled for visual embeddings.")

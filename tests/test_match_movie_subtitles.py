@@ -2,13 +2,18 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from worldmm.model_paths import resolve_hf_model_path, resolve_whisper_model_path
+
 MODULE_PATH = ROOT / "eval" / "match_movie_subtitles.py"
 SPEC = importlib.util.spec_from_file_location("match_movie_subtitles", MODULE_PATH)
 assert SPEC is not None and SPEC.loader is not None
@@ -193,6 +198,31 @@ class MatchMovieSubtitlesTest(unittest.TestCase):
 
         self.assertEqual(parsed["frame_id"], "000001")
         self.assertEqual(parsed["reason"]["timestamp_sec"], 15.0)
+
+    def test_resolve_hf_model_path_from_local_models_dir(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            models_dir = Path(tmpdir)
+            local_qwen = models_dir / "Qwen"
+            local_qwen.mkdir()
+
+            with patch.dict(os.environ, {"WORLDMM_HF_MODELS_DIR": str(models_dir)}):
+                resolved = resolve_hf_model_path("Qwen/Qwen3-Embedding-4B")
+
+        self.assertEqual(resolved, str(local_qwen))
+
+    def test_resolve_whisper_model_path_requires_ct2_model_bin(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            models_dir = Path(tmpdir)
+            original_whisper = models_dir / "distil-whisper"
+            original_whisper.mkdir()
+            ct2_whisper = models_dir / "distil-large-v3.5-ct2"
+            ct2_whisper.mkdir()
+            (ct2_whisper / "model.bin").write_text("fake", encoding="utf-8")
+
+            with patch.dict(os.environ, {"WORLDMM_HF_MODELS_DIR": str(models_dir)}):
+                resolved = resolve_whisper_model_path("distil-large-v3.5")
+
+        self.assertEqual(resolved, str(ct2_whisper))
 
 
 if __name__ == "__main__":

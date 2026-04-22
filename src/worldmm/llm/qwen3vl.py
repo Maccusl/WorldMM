@@ -18,6 +18,7 @@ from PIL import Image
 from transformers import Qwen3VLForConditionalGeneration, AutoProcessor
 from qwen_vl_utils import process_vision_info
 
+from worldmm.model_paths import resolve_hf_model_path
 from .utils import dynamic_retry_decorator
 
 # Configure logging
@@ -77,7 +78,7 @@ class Qwen3VLModel:
             raise ValueError(f"Unsupported model: {model_name}. Available: {list(MODEL_DICT.keys())}")
 
         # Set instance attributes
-        self.model_name = MODEL_DICT[model_name]
+        self.model_name = resolve_hf_model_path(os.getenv("WORLDMM_QWEN3VL_MODEL", MODEL_DICT[model_name]))
         self.max_retries = max(1, max_retries)
         self.max_size = max_size
         self.max_size_video = max_size_video

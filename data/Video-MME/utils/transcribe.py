@@ -34,6 +34,19 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARNING)
 
 SUPPORTED_VIDEO_SUFFIXES = {".mp4", ".avi", ".mov", ".mkv", ".m4v", ".webm"}
+WORLDMM_HF_MODELS_DIR_ENV = "WORLDMM_HF_MODELS_DIR"
+WHISPER_PATH_ALIASES = {
+    "distil-large-v3.5": (
+        "distil-whisper/distil-large-v3.5-ct2",
+        "distil-large-v3.5-ct2",
+        "distil-whisper",
+    ),
+    "distil-whisper/distil-large-v3.5-ct2": (
+        "distil-whisper/distil-large-v3.5-ct2",
+        "distil-large-v3.5-ct2",
+        "distil-whisper",
+    ),
+}
 
 
 @dataclass(slots=True)
@@ -89,7 +102,39 @@ def derive_num_workers(batch_size: int) -> int:
     return max(1, min(batch_size, os.cpu_count() or batch_size))
 
 
+def resolve_whisper_model_path(model_name: str) -> str:
+    model_path = Path(model_name).expanduser()
+    if model_path.exists() and (model_path / "model.bin").exists():
+        return str(model_path)
+
+    models_root_value = os.getenv(WORLDMM_HF_MODELS_DIR_ENV)
+    if not models_root_value:
+        return model_name
+
+    models_root = Path(models_root_value).expanduser()
+    if not models_root.exists():
+        return model_name
+
+    names = [
+        *WHISPER_PATH_ALIASES.get(model_name, ()),
+        model_name,
+        model_name.split("/")[-1],
+        model_name.replace("/", "--"),
+    ]
+    seen: set[str] = set()
+    for name in names:
+        if name in seen:
+            continue
+        seen.add(name)
+        candidate = models_root / name
+        if candidate.exists() and (candidate / "model.bin").exists():
+            return str(candidate)
+
+    return model_name
+
+
 def build_model(model_name: str, batch_size: int, device: str = "auto") -> WhisperModel:
+    model_name = resolve_whisper_model_path(model_name)
     return WhisperModel(
         model_name,
         device=device,
@@ -139,7 +184,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Transcribe Video-MME videos into `.srt` files.")
     parser.add_argument("--input-path", type=Path, default=Path("data/Video-MME/data"), help="Path to a video file or a directory of videos.")
     parser.add_argument("--output-path", type=Path, default=Path("data/Video-MME/transcript"), help="Output `.srt` file for a single input video, or transcript directory for video directories.")
-    parser.add_argument("--model", type=str, default="distil-large-v3.5", help="faster-whisper model name or local model path.")
+    parser.add_argument("--model", type=str, default=os.getenv("WORLDMM_WHISPER_MODEL", "distil-large-v3.5"), help="faster-whisper model name or local model path.")
     parser.add_argument("--batch-size", type=int, default=16, help="Number of video files to transcribe concurrently.")
     args = parser.parse_args()
 
@@ -151,7 +196,13 @@ def main() -> None:
 
     video_files = discover_video_files(input_path)
     num_workers = derive_num_workers(args.batch_size)
-    logger.info("Transcription settings: model=%s concurrent_files=%d num_workers=%d", args.model, args.batch_size, num_workers)
+    logger.info(
+        "Transcription settings: model=%s resolved_model=%s concurrent_files=%d num_workers=%d",
+        args.model,
+        resolve_whisper_model_path(args.model),
+        args.batch_size,
+        num_workers,
+    )
 
     model = build_model(args.model, batch_size=args.batch_size)
 

@@ -1,6 +1,9 @@
+import os
 import numpy as np
 from typing import Union, List, Dict, Any, Optional
 from PIL import Image
+
+from worldmm.model_paths import resolve_hf_model_path
 
 
 class EmbeddingModel:
@@ -23,8 +26,8 @@ class EmbeddingModel:
         # Initialize models lazily
         self._text_model = None
         self._vis_model = None
-        self.text_model_name = text_model_name
-        self.vis_model_name = vis_model_name
+        self.text_model_name = resolve_hf_model_path(os.getenv("WORLDMM_TEXT_EMBEDDING_MODEL", text_model_name))
+        self.vis_model_name = resolve_hf_model_path(os.getenv("WORLDMM_VIS_EMBEDDING_MODEL", vis_model_name))
 
         # Eagerly load models
         # self._text_model = self.text_model
