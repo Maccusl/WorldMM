@@ -99,6 +99,33 @@ class RetrievalBundle:
     visual_frames: list[Any] = field(default_factory=list)
 
 
+@dataclass
+class SubtitleMatchItem:
+    subtitle: SubtitleLine
+    bundle: RetrievalBundle
+    candidates: list[ClipCandidate]
+
+
+def format_subtitle_lines(subtitles: list[SubtitleLine]) -> str:
+    return "\n".join(f"[#{subtitle.subtitle_id}] {subtitle.text}" for subtitle in subtitles)
+
+
+def iter_subtitle_batches(
+    subtitles: list[SubtitleLine],
+    batch_size: int,
+    overlap: int,
+) -> Iterable[tuple[list[SubtitleLine], list[SubtitleLine]]]:
+    batch_size = max(1, batch_size)
+    overlap = max(0, overlap)
+    total = len(subtitles)
+
+    for start in range(0, total, batch_size):
+        end = min(total, start + batch_size)
+        context_start = max(0, start - overlap)
+        context_end = min(total, end + overlap)
+        yield subtitles[start:end], subtitles[context_start:context_end]
+
+
 def load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
@@ -514,18 +541,10 @@ def balanced_json_object(text: str) -> Optional[str]:
     return None
 
 
-def parse_clip_match_response(response: str, candidates: list[ClipCandidate]) -> dict[str, Any]:
+def normalize_clip_match_data(data: Any, candidates: list[ClipCandidate]) -> dict[str, Any]:
     candidate_by_frame = {candidate.frame_id: candidate for candidate in candidates}
     fallback = candidates[0]
     fallback_summary = "未能解析模型输出，使用检索排名最高的候选片段。"
-
-    data: Any = None
-    json_text = balanced_json_object(response.strip())
-    if json_text:
-        try:
-            data = json.loads(json_text)
-        except json.JSONDecodeError:
-            data = None
 
     if not isinstance(data, dict):
         return {
@@ -558,6 +577,62 @@ def parse_clip_match_response(response: str, candidates: list[ClipCandidate]) ->
             "timestamp_sec": timestamp_sec,
         },
     }
+
+
+def parse_clip_match_response(response: str, candidates: list[ClipCandidate]) -> dict[str, Any]:
+    data: Any = None
+    json_text = balanced_json_object(response.strip())
+    if json_text:
+        try:
+            data = json.loads(json_text)
+        except json.JSONDecodeError:
+            data = None
+
+    return normalize_clip_match_data(data, candidates)
+
+
+def parse_subtitle_id(value: Any) -> Optional[int]:
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        match = re.search(r"\d+", value)
+        if match:
+            return int(match.group(0))
+    return None
+
+
+def parse_batch_clip_match_response(response: str, items: list[SubtitleMatchItem]) -> list[dict[str, Any]]:
+    data: Any = None
+    json_text = balanced_json_object(response.strip())
+    if json_text:
+        try:
+            data = json.loads(json_text)
+        except json.JSONDecodeError:
+            data = None
+
+    raw_matches = data.get("matches") if isinstance(data, dict) else None
+    raw_by_subtitle_id: dict[int, dict[str, Any]] = {}
+    if isinstance(raw_matches, list):
+        for raw_match in raw_matches:
+            if not isinstance(raw_match, dict):
+                continue
+            subtitle_id = parse_subtitle_id(raw_match.get("subtitle_id"))
+            if subtitle_id is not None:
+                raw_by_subtitle_id[subtitle_id] = raw_match
+
+    results: list[dict[str, Any]] = []
+    for item in items:
+        raw_match = raw_by_subtitle_id.get(item.subtitle.subtitle_id)
+        match = normalize_clip_match_data(raw_match, item.candidates)
+        results.append(
+            {
+                "subtitle_id": item.subtitle.subtitle_id,
+                "text": item.subtitle.text,
+                "frame_id": match["frame_id"],
+                "reason": match["reason"],
+            }
+        )
+    return results
 
 
 def format_entry_for_evidence(entry: Any) -> str:
@@ -884,15 +959,27 @@ Step 2 (only if search): Pick one memory type (episodic/semantic/visual) and for
                     pass
                 candidate.image = None
 
-    def choose_candidate(self, movie: MovieInfo, movie_path: Path, subtitle: SubtitleLine, candidates: list[ClipCandidate], bundle: RetrievalBundle) -> dict[str, Any]:
-        prompt = self.prompt_template_manager.render("subtitle_clip_match")
-        candidate_payload = [candidate.to_prompt_dict() for candidate in candidates]
-        evidence_payload = {
+    def evidence_payload_for_bundle(self, bundle: RetrievalBundle) -> dict[str, Any]:
+        return {
             "round_history": bundle.round_history,
             "episodic_evidence": [format_entry_for_evidence(entry) for entry in bundle.episodic_entries[:20]],
             "semantic_evidence": [entry.to_display_str() for entry in bundle.semantic_entries[:20]],
             "visual_evidence": [format_visual_clip_for_evidence(clip) for clip in bundle.visual_clips[:20]],
         }
+
+    def prepare_match_item(self, movie_path: Path, subtitle: SubtitleLine) -> SubtitleMatchItem:
+        bundle = self.retrieve_for_subtitle(subtitle.text)
+        candidates = self.build_candidates(subtitle.text, bundle)
+        if not candidates:
+            raise RuntimeError(f"No clip candidates found for subtitle #{subtitle.subtitle_id}: {subtitle.text}")
+
+        self.attach_candidate_images(movie_path, candidates)
+        return SubtitleMatchItem(subtitle=subtitle, bundle=bundle, candidates=candidates)
+
+    def choose_candidate(self, movie: MovieInfo, movie_path: Path, subtitle: SubtitleLine, candidates: list[ClipCandidate], bundle: RetrievalBundle) -> dict[str, Any]:
+        prompt = self.prompt_template_manager.render("subtitle_clip_match")
+        candidate_payload = [candidate.to_prompt_dict() for candidate in candidates]
+        evidence_payload = self.evidence_payload_for_bundle(bundle)
 
         text_block = f"""Movie:
 id={movie.id}
@@ -928,17 +1015,69 @@ Select exactly one candidate frame_id and return the required JSON object."""
         response = self.respond_llm.generate(messages)
         return parse_clip_match_response(response, candidates)
 
-    def match_subtitle(self, movie: MovieInfo, paths: MoviePaths, subtitle: SubtitleLine) -> dict[str, Any]:
-        bundle = self.retrieve_for_subtitle(subtitle.text)
-        candidates = self.build_candidates(subtitle.text, bundle)
-        if not candidates:
-            raise RuntimeError(f"No clip candidates found for subtitle #{subtitle.subtitle_id}: {subtitle.text}")
+    def choose_candidate_batch(
+        self,
+        movie: MovieInfo,
+        movie_path: Path,
+        target_subtitles: list[SubtitleLine],
+        context_subtitles: list[SubtitleLine],
+        items: list[SubtitleMatchItem],
+    ) -> list[dict[str, Any]]:
+        prompt = self.prompt_template_manager.render("subtitle_clip_batch_match")
+        subtitle_payload = [
+            {
+                "subtitle_id": item.subtitle.subtitle_id,
+                "text": item.subtitle.text,
+                "candidates": [candidate.to_prompt_dict() for candidate in item.candidates],
+                "retrieved_evidence": self.evidence_payload_for_bundle(item.bundle),
+            }
+            for item in items
+        ]
 
-        self.attach_candidate_images(paths.movie_path, candidates)
+        text_block = f"""Movie:
+id={movie.id}
+title_ch={movie.title_ch}
+title_en={movie.title_en}
+path={movie_path}
+
+Subtitle context block:
+{format_subtitle_lines(context_subtitles)}
+
+Target subtitle_ids:
+{json.dumps([subtitle.subtitle_id for subtitle in target_subtitles], ensure_ascii=False)}
+
+Per-target candidates and evidence:
+{json.dumps(subtitle_payload, indent=2, ensure_ascii=False)}
+
+Select exactly one candidate frame_id for every target subtitle_id and return the required JSON object."""
+
+        content: list[dict[str, Any]] = [{"type": "text", "text": text_block}]
+        for item in items:
+            for candidate in item.candidates:
+                if candidate.image is None:
+                    continue
+                content.append(
+                    {
+                        "type": "text",
+                        "text": (
+                            f"Visual reference for subtitle_id={item.subtitle.subtitle_id}, "
+                            f"frame_id={candidate.frame_id}, timestamp_sec={candidate.timestamp_sec:.6f}"
+                        ),
+                    }
+                )
+                content.append({"type": "image", "image": candidate.image})
+
+        messages = [dict(item) for item in prompt]
+        messages.append({"role": "user", "content": content})
+        response = self.respond_llm.generate(messages)
+        return parse_batch_clip_match_response(response, items)
+
+    def match_subtitle(self, movie: MovieInfo, paths: MoviePaths, subtitle: SubtitleLine) -> dict[str, Any]:
+        item = self.prepare_match_item(paths.movie_path, subtitle)
         try:
-            match = self.choose_candidate(movie, paths.movie_path, subtitle, candidates, bundle)
+            match = self.choose_candidate(movie, paths.movie_path, subtitle, item.candidates, item.bundle)
         finally:
-            self.close_candidate_images(candidates)
+            self.close_candidate_images(item.candidates)
 
         return {
             "subtitle_id": subtitle.subtitle_id,
@@ -946,6 +1085,43 @@ Select exactly one candidate frame_id and return the required JSON object."""
             "frame_id": match["frame_id"],
             "reason": match["reason"],
         }
+
+    def match_subtitle_batch(
+        self,
+        movie: MovieInfo,
+        paths: MoviePaths,
+        target_subtitles: list[SubtitleLine],
+        context_subtitles: list[SubtitleLine],
+    ) -> list[dict[str, Any]]:
+        items: list[SubtitleMatchItem] = []
+        try:
+            for subtitle in target_subtitles:
+                items.append(self.prepare_match_item(paths.movie_path, subtitle))
+            try:
+                return self.choose_candidate_batch(movie, paths.movie_path, target_subtitles, context_subtitles, items)
+            except Exception as exc:
+                logger.warning(
+                    "Batch final matching failed for movie id=%s subtitles %s-%s: %s. Falling back to single matches.",
+                    movie.id,
+                    target_subtitles[0].subtitle_id if target_subtitles else "?",
+                    target_subtitles[-1].subtitle_id if target_subtitles else "?",
+                    exc,
+                )
+                results = []
+                for item in items:
+                    match = self.choose_candidate(movie, paths.movie_path, item.subtitle, item.candidates, item.bundle)
+                    results.append(
+                        {
+                            "subtitle_id": item.subtitle.subtitle_id,
+                            "text": item.subtitle.text,
+                            "frame_id": match["frame_id"],
+                            "reason": match["reason"],
+                        }
+                    )
+                return results
+        finally:
+            for item in items:
+                self.close_candidate_images(item.candidates)
 
     def cleanup(self) -> None:
         self.world_memory.cleanup()
@@ -976,6 +1152,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--visual-top-k", type=int, default=5)
     parser.add_argument("--candidate-top-k", type=int, default=12, help="Maximum candidate 10s clips sent to final prompt.")
     parser.add_argument("--candidate-image-count", type=int, default=1, help="Attach one sampled frame per candidate when > 0.")
+    parser.add_argument("--match-batch-size", type=int, default=1, help="Number of target subtitles to send to the final matching prompt at once. Use 30 for contextual batch matching.")
+    parser.add_argument("--match-batch-overlap", type=int, default=5, help="Neighboring subtitle count included before and after each final matching batch as context.")
     parser.add_argument("--no-auto-build", action="store_true", help="Do not generate missing WorldMM artifacts.")
     parser.add_argument("--overwrite-artifacts", action="store_true", help="Regenerate transcript, captions, and memory artifacts.")
     parser.add_argument("--dry-run", action="store_true", help="Validate inputs and print planned actions without loading models.")
@@ -986,11 +1164,22 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Optional[list[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.match_batch_size < 1:
+        parser.error("--match-batch-size must be at least 1.")
+    if args.match_batch_overlap < 0:
+        parser.error("--match-batch-overlap must be non-negative.")
 
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(levelname)s:%(name)s:%(message)s",
     )
+    if args.match_batch_size > 1 and args.candidate_image_count > 0:
+        logger.warning(
+            "Batched final matching may send many images (%s subtitles x up to %s candidates). "
+            "Use --candidate-image-count 0 or lower --candidate-top-k if the API rejects large requests.",
+            args.match_batch_size,
+            args.candidate_top_k,
+        )
 
     args.movie_root = args.movie_root.expanduser()
     args.subtitle_root = args.subtitle_root.expanduser()
@@ -1050,14 +1239,26 @@ def main(argv: Optional[list[str]] = None) -> int:
             logger.info("Loading WorldMM memory for movie id=%s", movie.id)
             matcher.load_movie_memory(movie, paths)
 
+            batches = list(
+                iter_subtitle_batches(
+                    subtitle_input.subtitles,
+                    batch_size=args.match_batch_size,
+                    overlap=args.match_batch_overlap,
+                )
+            )
             try:
                 from tqdm import tqdm
 
-                iterator = tqdm(subtitle_input.subtitles, desc=f"Movie {movie.id}", unit="subtitle")
+                iterator = tqdm(batches, desc=f"Movie {movie.id}", unit="batch")
             except Exception:
-                iterator = subtitle_input.subtitles
+                iterator = batches
 
-            results = [matcher.match_subtitle(movie, paths, subtitle) for subtitle in iterator]
+            results: list[dict[str, Any]] = []
+            for target_subtitles, context_subtitles in iterator:
+                if args.match_batch_size <= 1:
+                    results.extend(matcher.match_subtitle(movie, paths, subtitle) for subtitle in target_subtitles)
+                else:
+                    results.extend(matcher.match_subtitle_batch(movie, paths, target_subtitles, context_subtitles))
             write_json(paths.output_path, results)
             logger.info("Saved %d matches to %s", len(results), paths.output_path)
     finally:
