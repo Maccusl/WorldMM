@@ -1,6 +1,18 @@
+import importlib.util
+import os
 from typing import Union, List
+
 import numpy as np
 from sentence_transformers import SentenceTransformer
+
+
+def _resolve_attn_implementation() -> str:
+    requested = os.getenv("WORLDMM_TEXT_ATTN_IMPLEMENTATION") or os.getenv("WORLDMM_ATTN_IMPLEMENTATION")
+    if requested:
+        return requested
+    if importlib.util.find_spec("flash_attn") is not None:
+        return "flash_attention_2"
+    return "sdpa"
 
 
 class Qwen3EmbeddingModel:
@@ -12,7 +24,7 @@ class Qwen3EmbeddingModel:
         
         self.model = SentenceTransformer(
             model_name,
-            model_kwargs={"attn_implementation": "flash_attention_2", "dtype": "auto", "device_map": device},
+            model_kwargs={"attn_implementation": _resolve_attn_implementation(), "dtype": "auto", "device_map": device},
             tokenizer_kwargs={"padding_side": "left"},
         )
     

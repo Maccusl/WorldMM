@@ -5,6 +5,7 @@ Qwen3VL Model Wrapper with comprehensive video and image processing capabilities
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
 import logging
 import os
@@ -23,6 +24,16 @@ from .utils import dynamic_retry_decorator
 
 # Configure logging
 logger = logging.getLogger(__name__)
+
+
+def _resolve_attn_implementation() -> str:
+    requested = os.getenv("WORLDMM_QWEN3VL_ATTN_IMPLEMENTATION") or os.getenv("WORLDMM_ATTN_IMPLEMENTATION")
+    if requested:
+        return requested
+    if importlib.util.find_spec("flash_attn") is not None:
+        return "flash_attention_2"
+    return "sdpa"
+
 
 # Model configuration
 MODEL_DICT = {
@@ -101,7 +112,7 @@ class Qwen3VLModel:
         self.model = Qwen3VLForConditionalGeneration.from_pretrained(
             self.model_name,
             torch_dtype=torch.bfloat16,
-            attn_implementation="flash_attention_2",
+            attn_implementation=_resolve_attn_implementation(),
             device_map="cuda:1",
         )
         

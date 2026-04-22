@@ -1,4 +1,7 @@
+import importlib.util
+import os
 from typing import Dict
+
 import torch
 import torch.distributed as dist
 from torch import nn, Tensor
@@ -13,6 +16,15 @@ from .processor import QWEN2_VL, get_backbone_name, print_master, QWEN2_VL_TOKEN
 from transformers import modeling_utils
 if not hasattr(modeling_utils, "ALL_PARALLEL_STYLES") or modeling_utils.ALL_PARALLEL_STYLES is None:
     modeling_utils.ALL_PARALLEL_STYLES = ["tp", "none", "colwise", 'rowwise']
+
+
+def _resolve_attn_implementation() -> str:
+    requested = os.getenv("WORLDMM_VIS_ATTN_IMPLEMENTATION") or os.getenv("WORLDMM_ATTN_IMPLEMENTATION")
+    if requested:
+        return requested
+    if importlib.util.find_spec("flash_attn") is not None:
+        return "flash_attention_2"
+    return "sdpa"
 
 
 class MMEBModel(nn.Module):
@@ -68,7 +80,7 @@ class MMEBModel(nn.Module):
         print_master(f'Loading backbone [{model_backbone}] from {model_args.model_name}')
         # Loading the base model
         if model_backbone in [QWEN2_VL]:
-            config._attn_implementation = "flash_attention_2"
+            config._attn_implementation = _resolve_attn_implementation()
             config.padding_side = "left"
             config.use_cache = False
             base_model = backbone2model[model_backbone].from_pretrained(
@@ -78,7 +90,7 @@ class MMEBModel(nn.Module):
                 low_cpu_mem_usage=True,
             )
         elif model_backbone in [QWEN2_VL_TOKENSELECTION]:
-            config._attn_implementation = "flash_attention_2"
+            config._attn_implementation = _resolve_attn_implementation()
             config.padding_side = "left"
             config.use_cache = False
 
@@ -100,7 +112,7 @@ class MMEBModel(nn.Module):
             config.use_cache = False
             base_model = cls.TRANSFORMER_CLS.from_pretrained(
                 model_args.model_name, **kwargs, config=config,
-                attn_implementation="flash_attention_2",
+                attn_implementation=_resolve_attn_implementation(),
                 torch_dtype=torch.bfloat16,
                 trust_remote_code=True)
 
