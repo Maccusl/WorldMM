@@ -224,6 +224,56 @@ class MatchMovieSubtitlesTest(unittest.TestCase):
 
         self.assertEqual(resolved, str(ct2_whisper))
 
+    def test_local_qwen3vl_dir_defaults_movie_match_models(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            model_dir = Path(tmpdir) / "Qwen3-VL-8B-Instruct"
+            model_dir.mkdir()
+            parser = match_movie_subtitles.build_parser()
+            args = parser.parse_args(["--qwen3vl-model-dir", str(model_dir)])
+
+            with patch.dict(os.environ, {}, clear=True):
+                match_movie_subtitles.configure_local_runtime(args, parser)
+
+                self.assertEqual(args.memory_model, "qwen3vl-8b")
+                self.assertEqual(args.retriever_model, "qwen3vl-8b")
+                self.assertEqual(args.respond_model, "qwen3vl-8b")
+                self.assertEqual(args.caption_workers, 1)
+                self.assertEqual(os.environ["WORLDMM_QWEN3VL_MODEL"], str(model_dir))
+                self.assertEqual(os.environ["WORLDMM_LLM_MAX_WORKERS"], "1")
+
+    def test_local_qwen3vl_dir_keeps_explicit_movie_match_models(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            model_dir = Path(tmpdir) / "Qwen3-VL-8B-Instruct"
+            model_dir.mkdir()
+            parser = match_movie_subtitles.build_parser()
+            args = parser.parse_args(
+                [
+                    "--qwen3vl-model-dir",
+                    str(model_dir),
+                    "--memory-model",
+                    "gpt-5-mini",
+                    "--retriever-model",
+                    "qwen3vl-8B",
+                    "--respond-model",
+                    "gpt-5",
+                    "--llm-max-workers",
+                    "2",
+                    "--local-files-only",
+                ]
+            )
+
+            with patch.dict(os.environ, {}, clear=True):
+                match_movie_subtitles.configure_local_runtime(args, parser)
+
+                self.assertEqual(args.memory_model, "gpt-5-mini")
+                self.assertEqual(args.retriever_model, "qwen3vl-8B")
+                self.assertEqual(args.respond_model, "gpt-5")
+                self.assertEqual(args.caption_workers, 2)
+                self.assertEqual(os.environ["WORLDMM_LLM_MAX_WORKERS"], "2")
+                self.assertEqual(os.environ["WORLDMM_LOCAL_FILES_ONLY"], "1")
+                self.assertEqual(os.environ["HF_HUB_OFFLINE"], "1")
+                self.assertEqual(os.environ["TRANSFORMERS_OFFLINE"], "1")
+
 
 if __name__ == "__main__":
     unittest.main()

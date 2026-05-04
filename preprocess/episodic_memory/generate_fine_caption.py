@@ -20,7 +20,7 @@ from decord import VideoReader, cpu
 from PIL import Image
 from tqdm import tqdm
 
-from worldmm.llm import LLMModel
+from worldmm.llm import LLMModel, resolve_llm_max_workers
 
 SUPPORTED_VIDEO_SUFFIXES = {".mp4", ".avi", ".mov", ".mkv", ".m4v", ".webm"}
 SYSTEM_PROMPT = """You are an expert video captioner.
@@ -344,6 +344,7 @@ def process_video(
     output_file: Path,
     model: LLMModel,
     unit_time: int,
+    max_workers: int | None = None,
 ) -> int:
     transcript_entries = parse_transcript(transcript_file)
     video_reader = VideoReader(str(video_file), ctx=cpu(0))
@@ -358,7 +359,9 @@ def process_video(
 
     results: list[tuple[int, str]] = []
     generation_errors: list[str] = []
-    max_workers = min(64, os.cpu_count() or 1, len(segments)) if segments else 1
+    default_workers = min(64, os.cpu_count() or 1, len(segments)) if segments else 1
+    max_workers = max_workers or resolve_llm_max_workers(model, default=default_workers) or default_workers
+    max_workers = max(1, min(max_workers, len(segments) or 1))
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_idx = {
@@ -417,11 +420,14 @@ def main() -> None:
     parser.add_argument("--output-path", type=Path, default=Path("data/Video-MME/caption"), help="Output `.json` file for single-file input, or caption directory for transcript directories.")
     parser.add_argument("--model", type=str, default="gpt-5-mini", help="LLM model name.")
     parser.add_argument("--unit-time", type=int, default=10, help="Segment length in seconds.")
+    parser.add_argument("--max-workers", type=int, default=None, help="Maximum concurrent LLM caption calls. Defaults to 1 for local Qwen3-VL models.")
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing caption files.")
     args = parser.parse_args()
 
     if args.unit_time < 1:
         parser.error("--unit-time must be at least 1.")
+    if args.max_workers is not None and args.max_workers < 1:
+        parser.error("--max-workers must be at least 1.")
 
     validate_paths(args.video_path, args.transcript_path, args.output_path)
 
@@ -463,6 +469,7 @@ def main() -> None:
                 output_file=output_file,
                 model=model,
                 unit_time=args.unit_time,
+                max_workers=args.max_workers,
             )
             processed += 1
             tqdm.write(f"Generated {segment_count} captions for {video_file.name} -> {output_file}")

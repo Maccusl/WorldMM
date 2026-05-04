@@ -8,7 +8,7 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .utils import ConsolidationRawOutput
-from ...llm import LLMModel, PromptTemplateManager
+from ...llm import LLMModel, PromptTemplateManager, resolve_llm_max_workers
 from ...embedding import EmbeddingModel
 
 logger = logging.getLogger(__name__)
@@ -193,7 +193,8 @@ class SemanticConsolidation:
         
         # Process all triples concurrently
         results = []
-        with ThreadPoolExecutor() as executor:
+        max_workers = resolve_llm_max_workers(self.llm_model)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = {executor.submit(process_single_triple, i): i for i in range(len(current_triples))}
             pbar = tqdm(as_completed(futures), total=len(futures), 
                        desc=f"Consolidating triples", leave=False)

@@ -32,6 +32,10 @@ DEFAULT_WORK_DIR = Path("data/MovieMatch")
 DEFAULT_METADATA_DIR = Path("output/metadata/movie_match")
 DEFAULT_OUTPUT_DIR = Path("output/movie_match")
 DEFAULT_CACHE_DIR = Path(".cache/movie_match")
+DEFAULT_MEMORY_MODEL = "gpt-5-mini"
+DEFAULT_RETRIEVER_MODEL = "gpt-5-mini"
+DEFAULT_RESPOND_MODEL = "gpt-5"
+LOCAL_QWEN3VL_MODEL_ALIAS = "qwen3vl-8b"
 
 
 @dataclass(frozen=True)
@@ -402,6 +406,82 @@ def run_command(cmd: list[str], *, dry_run: bool = False) -> None:
     subprocess.run(cmd, check=True)
 
 
+def _expand_optional_path(path: Optional[Path]) -> Optional[Path]:
+    return path.expanduser() if path is not None else None
+
+
+def _require_existing_path(path: Path, description: str) -> None:
+    if not path.exists():
+        raise FileNotFoundError(f"{description} not found: {path}")
+
+
+def _set_path_env(env_name: str, path: Optional[Path], description: str) -> None:
+    if path is None:
+        return
+    _require_existing_path(path, description)
+    os.environ[env_name] = str(path)
+
+
+def configure_local_runtime(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
+    """Configure local model paths before spawning builders or loading models."""
+    using_local_qwen = args.qwen3vl_model_dir is not None or bool(os.getenv("WORLDMM_QWEN3VL_MODEL"))
+
+    if args.memory_model is None:
+        args.memory_model = LOCAL_QWEN3VL_MODEL_ALIAS if using_local_qwen else DEFAULT_MEMORY_MODEL
+    if args.retriever_model is None:
+        args.retriever_model = LOCAL_QWEN3VL_MODEL_ALIAS if using_local_qwen else DEFAULT_RETRIEVER_MODEL
+    if args.respond_model is None:
+        args.respond_model = LOCAL_QWEN3VL_MODEL_ALIAS if using_local_qwen else DEFAULT_RESPOND_MODEL
+
+    if args.llm_max_workers is not None and args.llm_max_workers < 1:
+        parser.error("--llm-max-workers must be at least 1.")
+    if args.caption_workers is not None and args.caption_workers < 1:
+        parser.error("--caption-workers must be at least 1.")
+
+    _set_path_env("WORLDMM_QWEN3VL_MODEL", args.qwen3vl_model_dir, "Qwen3-VL model directory")
+    _set_path_env("WORLDMM_HF_MODELS_DIR", args.hf_models_dir, "Hugging Face models root")
+    _set_path_env("WORLDMM_TEXT_EMBEDDING_MODEL", args.text_embedding_model_dir, "text embedding model directory")
+    _set_path_env("WORLDMM_VIS_EMBEDDING_MODEL", args.vis_embedding_model_dir, "visual embedding model directory")
+    _set_path_env("WORLDMM_VIS_BASE_MODEL", args.vis_base_model_dir, "visual embedding base model directory")
+
+    if args.whisper_model_dir is not None:
+        _require_existing_path(args.whisper_model_dir, "Whisper model directory")
+        args.whisper_model = str(args.whisper_model_dir)
+        os.environ["WORLDMM_WHISPER_MODEL"] = str(args.whisper_model_dir)
+
+    if args.qwen3vl_device_map:
+        os.environ["WORLDMM_QWEN3VL_DEVICE_MAP"] = args.qwen3vl_device_map
+    elif using_local_qwen:
+        os.environ.setdefault("WORLDMM_QWEN3VL_DEVICE_MAP", "auto")
+
+    if args.llm_max_workers is not None:
+        os.environ["WORLDMM_LLM_MAX_WORKERS"] = str(args.llm_max_workers)
+    elif using_local_qwen:
+        os.environ.setdefault("WORLDMM_LLM_MAX_WORKERS", "1")
+
+    if args.caption_workers is None and using_local_qwen:
+        try:
+            args.caption_workers = int(os.getenv("WORLDMM_LLM_MAX_WORKERS", "1"))
+        except ValueError:
+            args.caption_workers = 1
+
+    if args.local_files_only:
+        os.environ["WORLDMM_LOCAL_FILES_ONLY"] = "1"
+        os.environ["HF_HUB_OFFLINE"] = "1"
+        os.environ["TRANSFORMERS_OFFLINE"] = "1"
+
+    if using_local_qwen:
+        logger.info(
+            "Local Qwen3-VL runtime: model=%s memory=%s retriever=%s responder=%s device_map=%s llm_workers=%s",
+            os.getenv("WORLDMM_QWEN3VL_MODEL", "<hf-cache-or-model-id>"),
+            args.memory_model,
+            args.retriever_model,
+            args.respond_model,
+            os.getenv("WORLDMM_QWEN3VL_DEVICE_MAP", "auto"),
+            os.getenv("WORLDMM_LLM_MAX_WORKERS", "1"),
+        )
+
+
 def expected_memory_files(paths: MoviePaths, movie_id: int, model_name: str) -> list[Path]:
     return [
         paths.metadata_root / "episodic_memory" / str(movie_id) / f"episodic_triple_results_{model_name}.json",
@@ -460,6 +540,7 @@ def ensure_movie_artifacts(args: argparse.Namespace, movie: MovieInfo, paths: Mo
                 args.memory_model,
                 "--unit-time",
                 "10",
+                *(["--max-workers", str(args.caption_workers)] if args.caption_workers else []),
                 *(["--overwrite"] if args.overwrite_artifacts else []),
             ],
             dry_run=args.dry_run,
@@ -677,7 +758,10 @@ class SubtitleMatcher:
         self.prompt_template_manager = PromptTemplateManager()
         self.embedding_model = EmbeddingModel()
         self.retriever_llm = LLMModel(model_name=args.retriever_model)
-        self.respond_llm = LLMModel(model_name=args.respond_model, fps=1)
+        if args.respond_model.lower() == args.retriever_model.lower():
+            self.respond_llm = self.retriever_llm
+        else:
+            self.respond_llm = LLMModel(model_name=args.respond_model, fps=1)
         self.world_memory = WorldMemory(
             embedding_model=self.embedding_model,
             retriever_llm_model=self.retriever_llm,
@@ -1138,13 +1222,22 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--metadata-dir", type=Path, default=DEFAULT_METADATA_DIR, help="WorldMM metadata root.")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR, help="Directory for per-movie JSON outputs.")
     parser.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE_DIR, help="HippoRAG cache root for matching.")
-    parser.add_argument("--memory-model", default="gpt-5-mini", help="Model used for caption/memory construction.")
-    parser.add_argument("--retriever-model", default="gpt-5-mini", help="LLM model for retrieval support.")
-    parser.add_argument("--respond-model", default="gpt-5", help="LLM model for reasoning and final matching.")
+    parser.add_argument("--memory-model", default=None, help="Model used for caption/memory construction. Defaults to gpt-5-mini, or qwen3vl-8b when --qwen3vl-model-dir is set.")
+    parser.add_argument("--retriever-model", default=None, help="LLM model for retrieval support. Defaults to gpt-5-mini, or qwen3vl-8b when --qwen3vl-model-dir is set.")
+    parser.add_argument("--respond-model", default=None, help="LLM model for reasoning and final matching. Defaults to gpt-5, or qwen3vl-8b when --qwen3vl-model-dir is set.")
+    parser.add_argument("--qwen3vl-model-dir", type=Path, default=None, help="Local Qwen3-VL-8B-Instruct directory. Sets WORLDMM_QWEN3VL_MODEL and defaults all LLM roles to qwen3vl-8b.")
+    parser.add_argument("--qwen3vl-device-map", default=None, help="Device map for local Qwen3-VL loading, e.g. auto, cuda:0, cuda:1.")
+    parser.add_argument("--hf-models-dir", type=Path, default=None, help="Root directory containing local Hugging Face model folders.")
+    parser.add_argument("--text-embedding-model-dir", type=Path, default=None, help="Local Qwen3 text embedding model directory.")
+    parser.add_argument("--vis-embedding-model-dir", type=Path, default=None, help="Local VLM2Vec adapter directory.")
+    parser.add_argument("--vis-base-model-dir", type=Path, default=None, help="Local visual embedding backbone directory, e.g. Qwen2-VL-2B-Instruct.")
+    parser.add_argument("--whisper-model-dir", type=Path, default=None, help="Local faster-whisper CTranslate2 model directory.")
     parser.add_argument("--whisper-model", default=os.getenv("WORLDMM_WHISPER_MODEL", "distil-large-v3.5"), help="faster-whisper model for transcript generation.")
     parser.add_argument("--whisper-batch-size", type=int, default=16, help="Concurrent files for transcription.")
     parser.add_argument("--gpu", default="0", help="GPU token list for visual feature extraction.")
     parser.add_argument("--num-frames", type=int, default=10, help="Frames sampled for visual embeddings.")
+    parser.add_argument("--llm-max-workers", type=int, default=None, help="Maximum concurrent local LLM calls. Defaults to 1 for local Qwen3-VL.")
+    parser.add_argument("--caption-workers", type=int, default=None, help="Maximum concurrent LLM calls during 10-second caption generation. Defaults to --llm-max-workers for local Qwen3-VL.")
     parser.add_argument("--max-rounds", type=int, default=5, help="Maximum WorldMM retrieval rounds per subtitle.")
     parser.add_argument("--max-errors", type=int, default=5, help="Maximum retrieval errors before final selection.")
     parser.add_argument("--episodic-top-k", type=int, default=5)
@@ -1156,6 +1249,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--match-batch-overlap", type=int, default=5, help="Neighboring subtitle count included before and after each final matching batch as context.")
     parser.add_argument("--no-auto-build", action="store_true", help="Do not generate missing WorldMM artifacts.")
     parser.add_argument("--overwrite-artifacts", action="store_true", help="Regenerate transcript, captions, and memory artifacts.")
+    parser.add_argument("--local-files-only", action="store_true", help="Force Hugging Face/transformers loaders to use local files only.")
     parser.add_argument("--dry-run", action="store_true", help="Validate inputs and print planned actions without loading models.")
     parser.add_argument("--verbose", action="store_true", help="Enable debug logging.")
     return parser
@@ -1187,6 +1281,15 @@ def main(argv: Optional[list[str]] = None) -> int:
     args.metadata_dir = args.metadata_dir.expanduser()
     args.output_dir = args.output_dir.expanduser()
     args.cache_dir = args.cache_dir.expanduser()
+    args.movie_info = args.movie_info.expanduser()
+    args.qwen3vl_model_dir = _expand_optional_path(args.qwen3vl_model_dir)
+    args.hf_models_dir = _expand_optional_path(args.hf_models_dir)
+    args.text_embedding_model_dir = _expand_optional_path(args.text_embedding_model_dir)
+    args.vis_embedding_model_dir = _expand_optional_path(args.vis_embedding_model_dir)
+    args.vis_base_model_dir = _expand_optional_path(args.vis_base_model_dir)
+    args.whisper_model_dir = _expand_optional_path(args.whisper_model_dir)
+
+    configure_local_runtime(args, parser)
 
     movie_index = load_movie_index(args.movie_info)
     movie_ids = parse_movie_ids(args.movie_ids)

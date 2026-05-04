@@ -6,7 +6,7 @@ from tqdm import tqdm
 import logging
 
 from .utils import SemanticRawOutput, SemanticOutput
-from ...llm import LLMModel, PromptTemplateManager
+from ...llm import LLMModel, PromptTemplateManager, resolve_llm_max_workers
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,8 @@ class SemanticExtraction:
                 - A dict with keys as the chunk ids (mdhash) and values as the episodic evidence indices
         """
         results = []
-        with ThreadPoolExecutor() as executor:
+        max_workers = resolve_llm_max_workers(self.llm_model)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = {
                 executor.submit(self.semantic_extraction, chunk_key, episodic_triples): episodic_triples
                 for chunk_key, episodic_triples in episodic_triples_batch.items()

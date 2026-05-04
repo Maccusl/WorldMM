@@ -6,7 +6,7 @@ from tqdm import tqdm
 import logging
 
 from .utils import compute_mdhash_id, filter_invalid_triples, NerRawOutput, TripleRawOutput, NerOutput, TripleOutput
-from ...llm import dynamic_retry_decorator, LLMModel, PromptTemplateManager
+from ...llm import dynamic_retry_decorator, resolve_llm_max_workers, LLMModel, PromptTemplateManager
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +135,9 @@ class OpenIE:
 
         ner_results_list = []
 
-        with ThreadPoolExecutor() as executor:
+        max_workers = resolve_llm_max_workers(self.llm_model)
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             # Create NER futures for each chunk (submission order doesn't matter)
             ner_futures = {
                 executor.submit(self.ner, chunk_key, chunk_passages[chunk_key]): chunk_key
@@ -148,7 +150,7 @@ class OpenIE:
                 ner_results_list.append(result)
 
         triple_results_list = []
-        with ThreadPoolExecutor() as executor:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             # Create triple extraction futures for each chunk using outputs from NER
             re_futures = {
                 executor.submit(self.triple_extraction, ner_result.chunk_id,

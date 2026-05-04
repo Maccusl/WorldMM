@@ -20,7 +20,7 @@ from transformers import Qwen3VLForConditionalGeneration, AutoProcessor
 from qwen_vl_utils import process_vision_info
 
 from worldmm.model_paths import resolve_hf_model_path
-from .utils import dynamic_retry_decorator
+from .utils import dynamic_retry_decorator, resolve_llm_max_workers
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -33,6 +33,22 @@ def _resolve_attn_implementation() -> str:
     if importlib.util.find_spec("flash_attn") is not None:
         return "flash_attention_2"
     return "sdpa"
+
+
+def _env_flag(name: str) -> bool:
+    return os.getenv(name, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _resolve_device_map() -> str:
+    return os.getenv("WORLDMM_QWEN3VL_DEVICE_MAP") or os.getenv("WORLDMM_LLM_DEVICE_MAP") or "auto"
+
+
+def _resolve_local_files_only() -> bool:
+    return (
+        _env_flag("WORLDMM_LOCAL_FILES_ONLY")
+        or _env_flag("TRANSFORMERS_OFFLINE")
+        or _env_flag("HF_HUB_OFFLINE")
+    )
 
 
 # Model configuration
@@ -85,11 +101,12 @@ class Qwen3VLModel:
         if fps is not None and nframes is not None:
             raise ValueError("Cannot provide both 'fps' and 'nframes'. Please choose one for video sampling.")
             
-        if model_name not in MODEL_DICT:
+        model_key = model_name.lower()
+        if model_key not in MODEL_DICT:
             raise ValueError(f"Unsupported model: {model_name}. Available: {list(MODEL_DICT.keys())}")
 
         # Set instance attributes
-        self.model_name = resolve_hf_model_path(os.getenv("WORLDMM_QWEN3VL_MODEL", MODEL_DICT[model_name]))
+        self.model_name = resolve_hf_model_path(os.getenv("WORLDMM_QWEN3VL_MODEL", MODEL_DICT[model_key]))
         self.max_retries = max(1, max_retries)
         self.max_size = max_size
         self.max_size_video = max_size_video
@@ -113,11 +130,15 @@ class Qwen3VLModel:
             self.model_name,
             torch_dtype=torch.bfloat16,
             attn_implementation=_resolve_attn_implementation(),
-            device_map="cuda:1",
+            device_map=_resolve_device_map(),
+            local_files_only=_resolve_local_files_only(),
         )
         
         # Load processor
-        self.processor = AutoProcessor.from_pretrained(self.model_name)
+        self.processor = AutoProcessor.from_pretrained(
+            self.model_name,
+            local_files_only=_resolve_local_files_only(),
+        )
 
     def _validate_file_path(self, file_path: Union[str, Path]) -> Path:
         """Validate and convert file path to Path object."""
@@ -439,7 +460,7 @@ class Qwen3VLModel:
             return []
         
         # Process prompts in parallel using ThreadPoolExecutor
-        max_workers = min(len(batch_prompts), (os.cpu_count() or 1) + 4)
+        max_workers = resolve_llm_max_workers(self, default=min(len(batch_prompts), (os.cpu_count() or 1) + 4))
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             results = list(executor.map(
                 lambda p: self.generate(self._normalize_prompt(p), text_format=text_format, **kwargs),
@@ -476,7 +497,7 @@ class Qwen3VLModel:
             return []
         
         if max_workers is None:
-            max_workers = min(32, len(batch_prompts))
+            max_workers = resolve_llm_max_workers(self, default=min(32, len(batch_prompts)))
         
         results: List[Any] = [""] * len(batch_prompts)
         
